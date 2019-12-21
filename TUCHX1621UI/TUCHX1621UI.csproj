@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -34,7 +35,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>favicon-20191221084156471.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HslCommunication">
+      <HintPath>..\..\..\..\类库\HslCommunication.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -55,6 +62,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Dictionary1.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -94,6 +105,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="favicon-20191221084156471.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="X1621.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TUCHX1621UI.Model\TUCHX1621UI.Model.csproj">
+      <Project>{6f3c13a5-2050-4597-a06f-4d7a93ab4ade}</Project>
+      <Name>TUCHX1621UI.Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

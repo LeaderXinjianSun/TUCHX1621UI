@@ -23,6 +23,80 @@ namespace TUCHX1621UI
         public MainWindow()
         {
             InitializeComponent();
+            System.Diagnostics.Process[] myProcesses = System.Diagnostics.Process.GetProcessesByName("TUCHX1621UI");//获取指定的进程名   
+            if (myProcesses.Length > 1) //如果可以获取到知道的进程名则说明已经启动
+            {
+                System.Windows.MessageBox.Show("不允许重复打开软件");
+                System.Windows.Application.Current.Shutdown();
+            }
+            else
+            {
+
+            }
+        }
+
+        void AddMessage(string str)
+        {
+            string[] s = MsgTextBox.Text.Split('\n');
+            if (s.Length > 1000)
+            {
+                MsgTextBox.Text = "";
+            }
+            if (MsgTextBox.Text != "")
+            {
+                MsgTextBox.Text += "\r\n";
+            }
+            MsgTextBox.Text += DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " " + str;
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            AddMessage("软件加载完成");
+        }
+
+        private void HomePageSelect(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ParameterPageSelect(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MsgTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            MsgTextBox.ScrollToEnd();
+        }
+
+        private void EpsonStartButtonClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void EpsonPauseButtonClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void EpsonContinueButtonClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void EpsonReStartButtonClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void FuncButtonClick(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
