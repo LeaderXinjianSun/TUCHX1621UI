@@ -21,8 +21,12 @@
             <RowDefinition Height="30"></RowDefinition>
         </Grid.RowDefinitions>
         <Menu VerticalAlignment="Center">
-            <MenuItem Header="主页" Click="HomePageSelect"></MenuItem>
-            <MenuItem Header="参数" Click="ParameterPageSelect"></MenuItem>
+            <MenuItem Header="{DynamicResource MenuHomeProperty}" Click="HomePageSelect"></MenuItem>
+            <MenuItem Header="{DynamicResource MenuParameterProperty}" Click="ParameterPageSelect"></MenuItem>
+            <MenuItem Header="{DynamicResource MenuLanguageProperty}">
+                <MenuItem Header="简体" Click="LanguageSwitchChinese"></MenuItem>
+                <MenuItem Header="English" Click="LanguageSwitchEnglish"></MenuItem>
+            </MenuItem>
         </Menu>
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
@@ -37,7 +41,6 @@
                 <Grid.Background>
                     <ImageBrush ImageSource="X1621.jpg" Stretch="UniformToFill"></ImageBrush>
                 </Grid.Background>
-                
             </Grid>
             <TextBox Grid.Row="1" VerticalAlignment="Stretch" VerticalContentAlignment="Top" HorizontalContentAlignment="Left" Margin="1" x:Name="MsgTextBox" IsReadOnly="True" TextChanged="MsgTextBox_TextChanged"  FontSize="14" Background="Black" FontFamily="宋体" Foreground="White" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"></TextBox>
             <Grid Grid.Column="1" Grid.RowSpan="2">
@@ -56,49 +59,7 @@
                     <ColumnDefinition></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <Button Margin="10" FontSize="20" Content="启动" Click="EpsonStartButtonClick"></Button>
-                <Button Margin="10" FontSize="20" Grid.Column="1" Content="暂停" Click="EpsonPauseButtonClick"></Button>
-                <Button Margin="10" FontSize="20" Grid.Column="2" Content="继续" Click="EpsonContinueButtonClick"></Button>
-                <Button Margin="10" FontSize="20" Grid.Row="1" Content="重启" Click="EpsonReStartButtonClick"></Button>
                 <Button Margin="10" FontSize="20" Grid.Row="1" Grid.Column="2"  Content="Func" Click="FuncButtonClick"></Button>
-                <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.ColumnSpan="3">
-                    <StackPanel Style="{StaticResource EpsonStatusStackPanel}">
-                        <TextBlock Style="{StaticResource EpsonStatusTextBlock}" Text="自动" ></TextBlock>
-                        <Ellipse Name="EllipseEpsonStatusAuto" Style="{StaticResource EpsonEllipseBase}"></Ellipse>
-                    </StackPanel>
-                    <StackPanel Style="{StaticResource EpsonStatusStackPanel}">
-                        <TextBlock Style="{StaticResource EpsonStatusTextBlock}" Text="警告" ></TextBlock>
-                        <Ellipse Name="EllipseEpsonStatusWarning" Style="{StaticResource EpsonEllipseBase}"></Ellipse>
-                    </StackPanel>
-                    <StackPanel Style="{StaticResource EpsonStatusStackPanel}">
-                        <TextBlock Style="{StaticResource EpsonStatusTextBlock}" Text="错误" ></TextBlock>
-                        <Ellipse Name="EllipseEpsonStatusSError" Style="{StaticResource EpsonEllipseBase}"></Ellipse>
-                    </StackPanel>
-                    <StackPanel Style="{StaticResource EpsonStatusStackPanel}">
-                        <TextBlock Style="{StaticResource EpsonStatusTextBlock}" Text="门" ></TextBlock>
-                        <Ellipse Name="EllipseEpsonStatusSafeGuard" Style="{StaticResource EpsonEllipseBase}"></Ellipse>
-                    </StackPanel>
-                    <StackPanel Style="{StaticResource EpsonStatusStackPanel}">
-                        <TextBlock Style="{StaticResource EpsonStatusTextBlock}" Text="停止" ></TextBlock>
-                        <Ellipse Name="EllipseEpsonStatusEStop" Style="{StaticResource EpsonEllipseBase}"></Ellipse>
-                    </StackPanel>
-                    <StackPanel Style="{StaticResource EpsonStatusStackPanel}">
-                        <TextBlock Style="{StaticResource EpsonStatusTextBlock}" Text="异常" ></TextBlock>
-                        <Ellipse Name="EllipseEpsonStatusError" Style="{StaticResource EpsonEllipseBase}"></Ellipse>
-                    </StackPanel>
-                    <StackPanel Style="{StaticResource EpsonStatusStackPanel}">
-                        <TextBlock Style="{StaticResource EpsonStatusTextBlock}" Text="暂停" ></TextBlock>
-                        <Ellipse Name="EllipseEpsonStatusPaused" Style="{StaticResource EpsonEllipseBase}"></Ellipse>
-                    </StackPanel>
-                    <StackPanel Style="{StaticResource EpsonStatusStackPanel}">
-                        <TextBlock Style="{StaticResource EpsonStatusTextBlock}" Text="运行" ></TextBlock>
-                        <Ellipse Name="EllipseEpsonStatusRunning" Style="{StaticResource EpsonEllipseBase}"></Ellipse>
-                    </StackPanel>
-                    <StackPanel Style="{StaticResource EpsonStatusStackPanel}">
-                        <TextBlock Style="{StaticResource EpsonStatusTextBlock}" Text="准备" ></TextBlock>
-                        <Ellipse Name="EllipseEpsonStatusReady" Style="{StaticResource EpsonEllipseBase}"></Ellipse>
-                    </StackPanel>
-                </StackPanel>
             </Grid>
         </Grid>
         <StatusBar Grid.Row="2">

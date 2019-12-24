@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TUCHX1621UI.Model;
 
 namespace TUCHX1621UI
 {
@@ -20,6 +21,10 @@ namespace TUCHX1621UI
     /// </summary>
     public partial class MainWindow : Window
     {
+        #region 变量
+        private EpsonRC90 epsonRC90;
+        #endregion
+
         public MainWindow()
         {
             InitializeComponent();
@@ -31,7 +36,9 @@ namespace TUCHX1621UI
             }
             else
             {
-
+                epsonRC90 = new EpsonRC90();
+                epsonRC90.ModelPrint += ModelPrintEventProcess;
+                Run();
             }
         }
 
@@ -73,30 +80,52 @@ namespace TUCHX1621UI
         {
             MsgTextBox.ScrollToEnd();
         }
-
-        private void EpsonStartButtonClick(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void EpsonPauseButtonClick(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void EpsonContinueButtonClick(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void EpsonReStartButtonClick(object sender, RoutedEventArgs e)
-        {
-
-        }
-
+        
         private void FuncButtonClick(object sender, RoutedEventArgs e)
         {
+            int aa = int.Parse("02");
+            //AddMessage();
+        }
+        private void ModelPrintEventProcess(string str)
+        {
 
+        }
+        void UpdateUI()
+        {
+           
+        }
+        async void Run()
+        {
+            while (true)
+            {
+                await Task.Delay(100);
+                UpdateUI();
+            }
+        }
+        private void LanguageSwitchChinese(object sender, RoutedEventArgs e)
+        {
+            List<ResourceDictionary> dictionaryList = new List<ResourceDictionary>();
+            foreach (ResourceDictionary dictionary in Application.Current.Resources.MergedDictionaries)
+            {
+                dictionaryList.Add(dictionary);
+            }
+            string requestedCulture = @"Resources\zh-cn.xaml";
+            ResourceDictionary resourceDictionary = dictionaryList.FirstOrDefault(d => d.Source.OriginalString.Equals(requestedCulture));
+            Application.Current.Resources.MergedDictionaries.Remove(resourceDictionary);
+            Application.Current.Resources.MergedDictionaries.Add(resourceDictionary);
+        }
+
+        private void LanguageSwitchEnglish(object sender, RoutedEventArgs e)
+        {
+            List<ResourceDictionary> dictionaryList = new List<ResourceDictionary>();
+            foreach (ResourceDictionary dictionary in Application.Current.Resources.MergedDictionaries)
+            {
+                dictionaryList.Add(dictionary);
+            }
+            string requestedCulture = @"Resources\en-us.xaml";
+            ResourceDictionary resourceDictionary = dictionaryList.FirstOrDefault(d => d.Source.OriginalString.Equals(requestedCulture));
+            Application.Current.Resources.MergedDictionaries.Remove(resourceDictionary);
+            Application.Current.Resources.MergedDictionaries.Add(resourceDictionary);
         }
     }
 }
