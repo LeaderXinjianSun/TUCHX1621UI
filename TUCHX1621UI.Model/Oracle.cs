@@ -3,21 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data.OleDb;
 using System.Data;
+using Oracle.ManagedDataAccess.Client;
+using Oracle.ManagedDataAccess.Types;
 
 namespace TUCHX1621UI.Model
 {
     public class Oracle
     {
-        private string m_server_name;
+        private string m_ip;
+        private string m_db;
         private string m_id;
         private string m_pwd;
         private bool m_connect_state;
-        public OleDbConnection oledbConn = null;
-        public Oracle(string ServerName, string ID, string PWD)
+        OracleConnection oledbConn = null;
+
+        public Oracle(string IP, string DB, string ID, string PWD)
         {
-            m_server_name = ServerName;
+            m_ip = IP;
+            m_db = DB;
             m_id = ID;
             m_pwd = PWD;
             m_connect_state = false;
@@ -27,16 +31,12 @@ namespace TUCHX1621UI.Model
         {
             try
             {
-                string str1 = "Provider=MSDAORA.1" +
-                    ";Data Source=" + m_server_name +
-                    ";User Id=" + m_id +
-                    ";Password=" + m_pwd +
-                    ";Persist Security Info=False";
 
+                string connStr = string.Format("data source= (DESCRIPTION =(ADDRESS_LIST =(ADDRESS = (PROTOCOL = TCP)(HOST = {0})(PORT = 1521)))(CONNECT_DATA =(SERVICE_NAME = {1})));user id={2};password={3}", m_ip, m_db, m_id, m_pwd);
                 if (oledbConn == null)
                 {
                     m_connect_state = false;
-                    oledbConn = new OleDbConnection(str1);
+                    oledbConn = new OracleConnection(connStr);
                     oledbConn.Open();
                     if (oledbConn.State == ConnectionState.Open)
                     {
@@ -80,7 +80,7 @@ namespace TUCHX1621UI.Model
             DataSet da = new DataSet();
             try
             {
-                OleDbDataAdapter sda = new OleDbDataAdapter(strSQL, oledbConn);
+                OracleDataAdapter sda = new OracleDataAdapter(strSQL, oledbConn);
                 int m = sda.Fill(da);
                 sda.Dispose();
             }
@@ -89,6 +89,11 @@ namespace TUCHX1621UI.Model
                 throw new Exception(ex.Message);
             }
             return da;
+        }
+        public int executeNonQuery(string strSQL)
+        {
+            OracleCommand cmd = new OracleCommand(strSQL, oledbConn);
+            return cmd.ExecuteNonQuery();
         }
         public string OraclDateTime()
         {
