@@ -60,14 +60,7 @@
                         <ColumnDefinition></ColumnDefinition>
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-                    <local:Tester x:Name="Tester1" Margin="5"></local:Tester>
-                    <local:Tester x:Name="Tester2" Grid.Column="1" Margin="5"></local:Tester>
-                    <local:Tester x:Name="Tester3" Grid.Column="2" Margin="5"></local:Tester>
-                    <local:Tester x:Name="Tester4" Grid.Column="3" Margin="5"></local:Tester>
-                    <local:YieldRate x:Name="YieldRate1" Grid.Row="1" Margin="5"></local:YieldRate>
-                    <local:YieldRate x:Name="YieldRate2" Grid.Row="1" Grid.Column="1" Margin="5"></local:YieldRate>
-                    <local:YieldRate x:Name="YieldRate3" Grid.Row="1" Grid.Column="2" Margin="5"></local:YieldRate>
-                    <local:YieldRate x:Name="YieldRate4" Grid.Row="1" Grid.Column="3" Margin="5"></local:YieldRate>
+                   
                 </Grid>
             </Grid>
             <TextBox Grid.Row="1" VerticalAlignment="Stretch" VerticalContentAlignment="Top" HorizontalContentAlignment="Left" Margin="1" x:Name="MsgTextBox" IsReadOnly="True" TextChanged="MsgTextBox_TextChanged"  FontSize="14" Background="Black" FontFamily="宋体" Foreground="White" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"></TextBox>

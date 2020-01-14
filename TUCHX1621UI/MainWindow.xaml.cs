@@ -17,6 +17,7 @@ using System.Data;
 using BingLibrary.hjb.file;
 using System.IO;
 using OfficeOpenXml;
+using BingLibrary.hjb;
 
 namespace TUCHX1621UI
 {
@@ -256,19 +257,6 @@ namespace TUCHX1621UI
                         break;
                 }
                 EllipseRobotState.Fill = (epsonRC90.IOReceiveStatus && epsonRC90.TestSendStatus && epsonRC90.TestReceiveStatus) ? Brushes.Green : Brushes.Red;
-
-                Tester1.Result = epsonRC90.tester.Result[0];
-                YieldRate1.PassCount = epsonRC90.tester.OriginalPassCount[0];
-                YieldRate1.Yield = epsonRC90.tester.OriginalYield[0];
-                Tester2.Result = epsonRC90.tester.Result[1];
-                YieldRate2.PassCount = epsonRC90.tester.OriginalPassCount[1];
-                YieldRate2.Yield = epsonRC90.tester.OriginalYield[1];
-                Tester3.Result = epsonRC90.tester.Result[2];
-                YieldRate3.PassCount = epsonRC90.tester.OriginalPassCount[2];
-                YieldRate3.Yield = epsonRC90.tester.OriginalYield[2];
-                Tester4.Result = epsonRC90.tester.Result[3];
-                YieldRate4.PassCount = epsonRC90.tester.OriginalPassCount[3];
-                YieldRate4.Yield = epsonRC90.tester.OriginalYield[3];
             }            
         }
         void Scan1GetBarcodeCallback(string barcode)
@@ -471,22 +459,14 @@ namespace TUCHX1621UI
                 }
 
 
-                if (LastBanci != GetBanci())
+                if (LastBanci != GlobalVars.GetBanci())
                 {
-                    LastBanci = GetBanci();
+                    LastBanci = GlobalVars.GetBanci();
                     Inifile.INIWriteValue(iniParameterPath, "Summary", "LastBanci", LastBanci);
                     WriteMachineData();
                     for (int i = 0; i < 4; i++)
                     {
-                        epsonRC90.tester.TestCount[i] = 0;
-                        epsonRC90.tester.PassCount[i] = 0;
-                        Inifile.INIWriteValue(iniParameterPath, "Summary", "TesterTestCount" + (i + 1).ToString(), "0");
-                        Inifile.INIWriteValue(iniParameterPath, "Summary", "TesterPassCount" + (i + 1).ToString(), "0");
-
-                        epsonRC90.tester.OriginalTestCount[i] = 0;
-                        epsonRC90.tester.OriginalPassCount[i] = 0;
-                        Inifile.INIWriteValue(iniParameterPath, "Summary", "TesterOriginalTestCount" + (i + 1).ToString(), "0");
-                        Inifile.INIWriteValue(iniParameterPath, "Summary", "TesterOriginalPassCount" + (i + 1).ToString(), "0");
+                        epsonRC90.YanmadeTester[i].Clean();
                     }
                     this.Dispatcher.Invoke(new Action(() =>
                     {
@@ -525,27 +505,7 @@ namespace TUCHX1621UI
 
                 }
             }
-        }
-        private string GetBanci()
-        {
-            string rs = "";
-            if (DateTime.Now.Hour >= 8 && DateTime.Now.Hour < 20)
-            {
-                rs += DateTime.Now.ToString("yyyyMMdd") + "Day";
-            }
-            else
-            {
-                if (DateTime.Now.Hour >= 0 && DateTime.Now.Hour < 8)
-                {
-                    rs += DateTime.Now.AddDays(-1).ToString("yyyyMMdd") + "Night";
-                }
-                else
-                {
-                    rs += DateTime.Now.ToString("yyyyMMdd") + "Night";
-                }
-            }
-            return rs;
-        }
+        }       
         private void WriteMachineData()
         {
             string excelpath = @"D:\X1621MachineData.xlsx";
@@ -561,15 +521,17 @@ namespace TUCHX1621UI
                         worksheet.Cells[1, 1].Value = "日期时间";
                         for (int i = 0; i < 4; i++)
                         {
-                            worksheet.Cells[1, 2 + i * 3].Value = "穴" + (i + 1).ToString() + "测试数";
-                            worksheet.Cells[1, 3 + i * 3].Value = "穴" + (i + 1).ToString() + "良品数";
-                            worksheet.Cells[1, 4 + i * 3].Value = "穴" + (i + 1).ToString() + "良率";
+                            worksheet.Cells[1, 2 + i * 4].Value = "穴" + (i + 1).ToString() + "测试数";
+                            worksheet.Cells[1, 3 + i * 4].Value = "穴" + (i + 1).ToString() + "良品数";
+                            worksheet.Cells[1, 4 + i * 4].Value = "穴" + (i + 1).ToString() + "不良品数";
+                            worksheet.Cells[1, 5 + i * 4].Value = "穴" + (i + 1).ToString() + "良率";
                         }
                         for (int i = 0; i < 4; i++)
                         {
-                            worksheet.Cells[1, 14 + i * 3].Value = "穴" + (i + 1).ToString() + "测试数AAB";
-                            worksheet.Cells[1, 15 + i * 3].Value = "穴" + (i + 1).ToString() + "良品数AAB";
-                            worksheet.Cells[1, 16 + i * 3].Value = "穴" + (i + 1).ToString() + "良率AAB";
+                            worksheet.Cells[1, 18 + i * 4].Value = "穴" + (i + 1).ToString() + "测试数AAB";
+                            worksheet.Cells[1, 19 + i * 4].Value = "穴" + (i + 1).ToString() + "良品数AAB";
+                            worksheet.Cells[1, 20 + i * 4].Value = "穴" + (i + 1).ToString() + "不良品数AAB";
+                            worksheet.Cells[1, 21 + i * 4].Value = "穴" + (i + 1).ToString() + "良率AAB";
                         }
                         package.Save();
                     }
@@ -581,13 +543,15 @@ namespace TUCHX1621UI
                     worksheet.Cells[newrow, 1].Value = System.DateTime.Now.ToString();
                     for (int i = 0; i < 4; i++)
                     {
-                        worksheet.Cells[newrow, 2 + i * 3].Value = epsonRC90.tester.OriginalTestCount[i];
-                        worksheet.Cells[newrow, 3 + i * 3].Value = epsonRC90.tester.OriginalPassCount[i];
-                        worksheet.Cells[newrow, 4 + i * 3].Value = epsonRC90.tester.OriginalYield[i];
+                        worksheet.Cells[newrow, 2 + i * 4].Value = epsonRC90.YanmadeTester[i].TestCount_Nomal;
+                        worksheet.Cells[newrow, 3 + i * 4].Value = epsonRC90.YanmadeTester[i].PassCount_Nomal;
+                        worksheet.Cells[newrow, 4 + i * 4].Value = epsonRC90.YanmadeTester[i].FailCount_Nomal;
+                        worksheet.Cells[newrow, 5 + i * 4].Value = epsonRC90.YanmadeTester[i].Yield_Nomal;
 
-                        worksheet.Cells[newrow, 14 + i * 3].Value = epsonRC90.tester.TestCount[i];
-                        worksheet.Cells[newrow, 15 + i * 3].Value = epsonRC90.tester.PassCount[i];
-                        worksheet.Cells[newrow, 16 + i * 3].Value = epsonRC90.tester.Yield[i];
+                        worksheet.Cells[newrow, 18 + i * 4].Value = epsonRC90.YanmadeTester[i].TestCount;
+                        worksheet.Cells[newrow, 19 + i * 4].Value = epsonRC90.YanmadeTester[i].PassCount;
+                        worksheet.Cells[newrow, 20 + i * 4].Value = epsonRC90.YanmadeTester[i].FailCount_Nomal;
+                        worksheet.Cells[newrow, 21 + i * 4].Value = epsonRC90.YanmadeTester[i].Yield_Nomal;
                     }
                     package.Save();
                 }
@@ -595,9 +559,13 @@ namespace TUCHX1621UI
             }
             catch (Exception ex)
             {
-                AddMessage(ex.Message);
+                this.Dispatcher.Invoke(new Action(() =>
+                {
+                    AddMessage(ex.Message);
+                }));                
             }
         }
+        
         private void LanguageSwitchChinese(object sender, RoutedEventArgs e)
         {
             List<ResourceDictionary> dictionaryList = new List<ResourceDictionary>();

@@ -23,7 +23,8 @@ namespace TUCHX1621UI.Model
         string iniParameterPath = System.Environment.CurrentDirectory + "\\Parameter.ini";
         public string[] BordBarcode = new string[2] { "Null", "Null" };
         public ProducInfo[][] BarInfo = new ProducInfo[2][] { new ProducInfo[15], new ProducInfo[15] };
-        public Tester tester = new Tester();
+        public Tester[] YanmadeTester = new Tester[4];
+        public UploadSoftwareStatus[] uploadSoftwareStatus = new UploadSoftwareStatus[4];
         #endregion
         #region 事件
         public delegate void PrintEventHandler(string ModelMessageStr);
@@ -32,6 +33,13 @@ namespace TUCHX1621UI.Model
         #region 构造函数
         public EpsonRC90()
         {
+            for (int i = 0; i < 4; i++)
+            {
+                YanmadeTester[i] = new Tester(i + 1);
+                uploadSoftwareStatus[i] = new UploadSoftwareStatus(i + 1);
+                uploadSoftwareStatus[i].ModelPrint += uploadprint;
+                uploadSoftwareStatus[i].RecordPrint += RecordPrintOperate;
+            }
             Ip = Inifile.INIGetStringValue(iniParameterPath, "EpsonRC90", "Ip", "192.168.1.2");
             for (int i = 0; i < 2; i++)
             {
@@ -44,38 +52,7 @@ namespace TUCHX1621UI.Model
                     BarInfo[i][j].TDate = DateTime.Now.ToString("yyyyMMdd");
                     BarInfo[i][j].TTime = DateTime.Now.ToString("HHmmss");
                 }
-            }
-            for (int i = 0; i < 4; i++)
-            {
-                //Inifile.INIWriteValue(iniParameterPath, "Summary", "Tester1TestCount" + (i + 1).ToString(), "0");
-                try
-                {
-                    tester.TestCount[i] = int.Parse(Inifile.INIGetStringValue(iniParameterPath, "Summary", "TesterTestCount" + (i + 1).ToString(), "0"));
-                    tester.PassCount[i] = int.Parse(Inifile.INIGetStringValue(iniParameterPath, "Summary", "TesterPassCount" + (i + 1).ToString(), "0"));
-                    if (tester.TestCount[i] > 0)
-                    {
-                        tester.Yield[i] = (double)tester.PassCount[i] / (double)tester.TestCount[i] * 100;
-                    }
-                    else
-                    {
-                        tester.Yield[i] = 0;
-                    }
-
-                    tester.OriginalTestCount[i] = int.Parse(Inifile.INIGetStringValue(iniParameterPath, "Summary", "TesterOriginalTestCount" + (i + 1).ToString(), "0"));
-                    tester.OriginalPassCount[i] = int.Parse(Inifile.INIGetStringValue(iniParameterPath, "Summary", "TesterOriginalPassCount" + (i + 1).ToString(), "0"));
-                    if (tester.OriginalTestCount[i] > 0)
-                    {
-                        tester.OriginalYield[i] = (double)tester.OriginalPassCount[i] / (double)tester.OriginalTestCount[i] * 100;
-                    }
-                    else
-                    {
-                        tester.OriginalYield[i] = 0;
-                    }
-                }
-                catch
-                { }
-
-            }
+            }            
             Run();
         }
         #endregion
@@ -250,28 +227,18 @@ namespace TUCHX1621UI.Model
                                     }
                                     break;
                                 case "ReleaseB":
-                                    if (strs.Length == 4)
-                                    {
-                                        SaveRelease(1, strs);
-                                    }
+                                    SaveRelease(1, strs);
                                     break;
-                                case "OriginalResult":
-                                    if (strs.Length == 3)
-                                    {
-                                        UpdateOriginalResult(strs);
-                                    }
+                                case "TestResultCount":
+                                    TestResult tr = strs[1] == "OK" ? TestResult.Pass : TestResult.Ng;
+                                    YanmadeTester[int.Parse(strs[2]) - 1].Update(tr);
                                     break;
-                                case "ABBResult":
-                                    if (strs.Length == 3)
-                                    {
-                                        UpdateResult(strs);
-                                    }
+                                case "Start":
+                                    YanmadeTester[int.Parse(strs[1]) - 1].Start(TestFinishOperate);
                                     break;
-                                case "AABResult":
-                                    if (strs.Length == 3)
-                                    {
-                                        UpdateResult(strs);
-                                    }
+                                case "Finish":
+                                    YanmadeTester[int.Parse(strs[1]) - 1].TestResult = strs[2] == "1" ? TestResult.Pass : TestResult.Ng;
+                                    YanmadeTester[int.Parse(strs[1]) - 1].TestStatus = TestStatus.Tested;
                                     break;
                                 default:
                                     ModelPrint("无效指令： " + s);
@@ -320,6 +287,7 @@ namespace TUCHX1621UI.Model
                 mysql.DisConnect();
             }
         }
+        //放料到载盘；条码从夹爪转移到载盘
         async void SaveRelease(int _index,string[] rststr)
         {
             int index = int.Parse(rststr[1]);
@@ -338,90 +306,76 @@ namespace TUCHX1621UI.Model
                 }
                 mysql.DisConnect();
             });
-            if (!Directory.Exists("D:\\生产记录\\" + DateTime.Now.ToString("yyyyMMdd")))
-            {
-                Directory.CreateDirectory("D:\\生产记录\\" + DateTime.Now.ToString("yyyyMMdd"));
-            }
-            string path = "D:\\生产记录\\" + DateTime.Now.ToString("yyyyMMdd") + "\\" + DateTime.Now.ToString("yyyyMMdd") + "生产记录.csv";
-            for (int i = 0; i < 2 && index * 2 + i < 15; i++)
-            {
-                Csvfile.savetocsv(path, new string[] { DateTime.Now.ToString(), BarInfo[_index][index * 2 + i].Barcode, rststr[2 + i] == "4" ? "P" : "F" });
-            }
         }
-        void UpdateOriginalResult(string[] rststr)
+        private void TestFinishOperate(int index)
         {
-            int index = int.Parse(rststr[1]);
-
-            switch (rststr[2])
+            uploadSoftwareStatus[index - 1].testerCycle = YanmadeTester[index - 1].TestSpan.ToString();
+            uploadSoftwareStatus[index - 1].result = YanmadeTester[index - 1].TestResult == TestResult.Pass ? "PASS" : "FAIL";
+            if (YanmadeTester[index - 1].TestSpan > 11)
             {
-                case "3":
-                    tester.OriginalResult[index] = "F";
-                    break;
-                case "4":
-                    tester.OriginalResult[index] = "P";
-                    break;
-                default:
-                    tester.OriginalResult[index] = "N";
-                    break;
-            }
-            if (rststr[2] == "4" || rststr[2] == "3")
-            {
-                tester.OriginalTestCount[index]++;
-            }
-            if (rststr[2] == "4")
-            {
-                tester.OriginalPassCount[index]++;
-            }
-            if (tester.OriginalTestCount[index] > 0)
-            {
-                tester.OriginalYield[index] = (double)tester.OriginalPassCount[index] / (double)tester.OriginalTestCount[index] * 100;
+                uploadSoftwareStatus[index - 1].StartCommand();
             }
             else
             {
-                tester.OriginalYield[index] = 0;
+                uploadSoftwareStatus[index - 1].StopCommand();
             }
-
-
-            Inifile.INIWriteValue(iniParameterPath, "Summary", "TesterOriginalTestCount" + (index + 1).ToString(), tester.OriginalTestCount[index].ToString());
-            Inifile.INIWriteValue(iniParameterPath, "Summary", "TesterOriginalPassCount" + (index + 1).ToString(), tester.OriginalPassCount[index].ToString());
-
-
-
         }
-        void UpdateResult(string[] rststr)
+        private void uploadprint(string str)
         {
-            int index = int.Parse(rststr[1]);
-
-            switch (rststr[2])
+            ModelPrint(str);
+        }
+        private void RecordPrintOperate(int index, string bar, string rst, string cyc, bool isRecord)
+        {
+            SaveCSVfileRecord(DateTime.Now.ToString(), bar, rst, cyc + " s", index.ToString());
+            if (isRecord && !Tester.IsInSampleMode && !Tester.IsInGRRMode)
             {
-                case "3":
-                    tester.Result[index] = "F";
-                    break;
-                case "4":
-                    tester.Result[index] = "P";
-                    break;
-                default:
-                    tester.Result[index] = "N";
-                    break;
-            }
-            if (rststr[2] == "4" || rststr[2] == "3")
-            {
-                tester.TestCount[index]++;
-            }
-            if (rststr[2] == "4")
-            {
-                tester.PassCount[index]++;
-            }
-            if (tester.TestCount[index] > 0)
-            {
-                tester.Yield[index] = (double)tester.PassCount[index] / (double)tester.TestCount[index] * 100;
+                if (YanmadeTester[index - 1].TestSpan > 5)
+                {
+                    YanmadeTester[index - 1].UpdateNormalWithTestTimes(rst);
+                }
+                else
+                {
+                        ModelPrint(bar + " 测试时间小于5秒，不纳入良率统计");
+                }
             }
             else
             {
-                tester.Yield[index] = 0;
+                if (!isRecord && !Tester.IsInSampleMode && !Tester.IsInGRRMode)
+                {
+                    ModelPrint(bar + " 测试次数大于3次，不纳入良率统计");
+                }
             }
-            Inifile.INIWriteValue(iniParameterPath, "Summary", "TesterTestCount" + (index + 1).ToString(), tester.TestCount[index].ToString());
-            Inifile.INIWriteValue(iniParameterPath, "Summary", "TesterPassCount" + (index + 1).ToString(), tester.PassCount[index].ToString());
+            //try
+            //{
+            //    GlobalVar.Worksheet.Cells[(index - 1) * 2 + 3, 6].Value = Convert.ToInt32(GlobalVar.Worksheet.Cells[(index - 1) * 2 + 3, 6].Value) + 1;
+            //    GlobalVar.Worksheet.Cells[(index - 1) * 2 + 1 + 3, 6].Value = Convert.ToInt32(GlobalVar.Worksheet.Cells[(index - 1) * 2 + 1 + 3, 6].Value) + 1;
+            //}
+            //catch (Exception ex)
+            //{
+            //    MsgText = AddMessage(ex.Message);
+            //}
+        }
+        private void SaveCSVfileRecord(string TestTime, string Barcode, string TestResult, string TestCycleTime, string Index)
+        {
+            string filepath = "D:\\生产记录\\生产记录" + GlobalVars.GetBanci() + ".csv";
+            if (!Directory.Exists("D:\\生产记录"))
+            {
+                Directory.CreateDirectory("D:\\生产记录");
+            }
+            try
+            {
+                if (!File.Exists(filepath))
+                {
+                    string[] heads = { "Time", "Barcode", "Result", "Cycle", "Index" };
+                    Csvfile.savetocsv(filepath, heads);
+                }
+                string[] conte = { TestTime, Barcode, TestResult, TestCycleTime, Index };
+                Csvfile.savetocsv(filepath, conte);
+            }
+            catch (Exception ex)
+            {
+                ModelPrint(ex.Message);
+            }
         }
         #endregion
     }
@@ -434,27 +388,4 @@ namespace TUCHX1621UI.Model
         public string TDate { set; get; }
         public string TTime { set; get; }
     }
-    public class Tester
-    {
-        public string[] OriginalResult { set; get; }
-        public int[] OriginalPassCount { set; get; }
-        public int[] OriginalTestCount { set; get; }
-        public Double[] OriginalYield { set; get; }
-        public string[] Result { set; get; }
-        public int[] PassCount { set; get; }
-        public int[] TestCount { set; get; }
-        public Double[] Yield { set; get; }
-        public Tester()
-        {
-            OriginalResult = new string[4] { "N", "N", "N", "N" };
-            OriginalPassCount = new int[4] { 0, 0, 0, 0 };
-            OriginalTestCount = new int[4] { 0, 0, 0, 0 };
-            OriginalYield = new double[4] { 0, 0, 0, 0 };
-            Result = new string[4] { "N", "N", "N", "N" };
-            PassCount = new int[4] { 0, 0, 0, 0 };
-            TestCount = new int[4] { 0, 0, 0, 0 };
-            Yield = new double[4] { 0, 0, 0, 0 };
-        }
-    }
-
 }
