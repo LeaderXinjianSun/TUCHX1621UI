@@ -24,5 +24,17 @@
         <Setter Property="Fill" Value="Gray"></Setter>
         <Setter Property="Margin" Value="0,5"></Setter>
     </Style>
-
+    <Style TargetType="TextBlock" x:Key="CycleTextBlock">
+        <Setter Property="HorizontalAlignment" Value="Center"></Setter>
+        <Setter Property="VerticalAlignment" Value="Center"></Setter>
+        <Setter Property="FontSize" Value="14"></Setter>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="TextBlockGrid">
+        <Setter Property="VerticalAlignment" Value="Center"></Setter>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="YieldTextBlock">
+        <Setter Property="HorizontalAlignment" Value="Center"></Setter>
+        <Setter Property="VerticalAlignment" Value="Center"></Setter>
+        <Setter Property="FontSize" Value="14"></Setter>
+    </Style>
 </ResourceDictionary>

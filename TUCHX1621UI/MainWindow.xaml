@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TUCHX1621UI"
         mc:Ignorable="d"
-        Title="TuchX1621UI" x:Name="window1" Height="768" Width="1024" Icon="favicon-20191221084156471.ico"
+        x:Name="window1" Height="768" Width="1024" Icon="AVARY01.ico"
         WindowStartupLocation="CenterScreen" WindowState="Normal" BorderThickness="0" ResizeMode="CanResizeWithGrip" Closing="Window_Closing" Loaded="Window_Loaded">
     <Window.Resources>
         <ResourceDictionary>
@@ -60,7 +60,10 @@
                         <ColumnDefinition></ColumnDefinition>
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-                   
+                    <local:Tester x:Name="Tester0" Grid.Column="1" Margin="5"></local:Tester>
+                    <local:Tester x:Name="Tester1" Grid.Column="2" Margin="5"></local:Tester>
+                    <local:Tester x:Name="Tester2" Grid.Column="3" Margin="5"></local:Tester>
+                    <local:Tester x:Name="Tester3" Grid.Column="4" Margin="5"></local:Tester>
                 </Grid>
             </Grid>
             <TextBox Grid.Row="1" VerticalAlignment="Stretch" VerticalContentAlignment="Top" HorizontalContentAlignment="Left" Margin="1" x:Name="MsgTextBox" IsReadOnly="True" TextChanged="MsgTextBox_TextChanged"  FontSize="14" Background="Black" FontFamily="宋体" Foreground="White" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"></TextBox>
@@ -68,19 +71,143 @@
                 <Grid.RowDefinitions>
                     <RowDefinition></RowDefinition>
                     <RowDefinition></RowDefinition>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition></RowDefinition>
                 </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition></ColumnDefinition>
-                    <ColumnDefinition></ColumnDefinition>
-                    <ColumnDefinition></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                <Button Margin="10" FontSize="20" Grid.Row="1" Grid.Column="2"  Content="Func" Click="FuncButtonClick"></Button>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Button Margin="10" FontSize="20" Grid.Row="1" Grid.Column="2"  Content="Func" Click="FuncButtonClick"></Button>
+                </Grid>
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Name="PassStatusDisplay0" Style="{StaticResource YieldTextBlock}"></TextBlock>
+                        <TextBlock Name="PassStatusDisplay1" Style="{StaticResource YieldTextBlock}" Grid.Row="1"></TextBlock>
+                        <TextBlock Name="PassStatusDisplay2" Style="{StaticResource YieldTextBlock}" Grid.Column="1"></TextBlock>
+                        <TextBlock Name="PassStatusDisplay3" Style="{StaticResource YieldTextBlock}" Grid.Column="1" Grid.Row="1"></TextBlock>
+                    </Grid>
+                    <Grid Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="治具" Style="{StaticResource CycleTextBlock}"></TextBlock>
+                        <TextBlock Text="1#" Grid.Column="1" Style="{StaticResource CycleTextBlock}"></TextBlock>
+                        <TextBlock Text="2#" Grid.Column="2" Style="{StaticResource CycleTextBlock}"></TextBlock>
+                        <TextBlock Text="3#" Grid.Column="3" Style="{StaticResource CycleTextBlock}"></TextBlock>
+                        <TextBlock Text="4#" Grid.Column="4" Style="{StaticResource CycleTextBlock}"></TextBlock>
+                        <TextBlock Text="测试" Grid.Column="0" Grid.Row="1" Style="{StaticResource CycleTextBlock}"></TextBlock>
+                        <TextBlock Text="上料" Grid.Column="0" Grid.Row="2" Style="{StaticResource CycleTextBlock}"></TextBlock>
+                        <TextBlock Text="工时" Grid.Column="0" Grid.Row="3" Style="{StaticResource CycleTextBlock}"></TextBlock>
+                        <TextBlock Text="平均" Grid.Column="0" Grid.Row="4" Style="{StaticResource CycleTextBlock}"></TextBlock>
+
+                        <TextBlock Name="TestTime0" Grid.Column="1" Grid.Row="1" Style="{StaticResource CycleTextBlock}"><Run></Run></TextBlock>
+                        <TextBlock Name="TestTime1" Grid.Column="2" Grid.Row="1" Style="{StaticResource CycleTextBlock}"><Run></Run></TextBlock>
+                        <TextBlock Name="TestTime2" Grid.Column="3" Grid.Row="1" Style="{StaticResource CycleTextBlock}"><Run></Run></TextBlock>
+                        <TextBlock Name="TestTime3" Grid.Column="4" Grid.Row="1" Style="{StaticResource CycleTextBlock}"><Run></Run></TextBlock>
+
+                        <TextBlock Name="TestIdle0" Grid.Column="1" Grid.Row="2" Style="{StaticResource CycleTextBlock}"><Run></Run></TextBlock>
+                        <TextBlock Name="TestIdle1" Grid.Column="2" Grid.Row="2" Style="{StaticResource CycleTextBlock}"><Run></Run></TextBlock>
+                        <TextBlock Name="TestIdle2" Grid.Column="3" Grid.Row="2" Style="{StaticResource CycleTextBlock}"><Run></Run></TextBlock>
+                        <TextBlock Name="TestIdle3" Grid.Column="4" Grid.Row="2" Style="{StaticResource CycleTextBlock}"><Run></Run></TextBlock>
+
+                        <TextBlock Name="TestCycle0" Grid.Column="1" Grid.Row="3" Style="{StaticResource CycleTextBlock}"><Run></Run></TextBlock>
+                        <TextBlock Name="TestCycle1" Grid.Column="2" Grid.Row="3" Style="{StaticResource CycleTextBlock}"><Run></Run></TextBlock>
+                        <TextBlock Name="TestCycle2" Grid.Column="3" Grid.Row="3" Style="{StaticResource CycleTextBlock}"><Run></Run></TextBlock>
+                        <TextBlock Name="TestCycle3" Grid.Column="4" Grid.Row="3" Style="{StaticResource CycleTextBlock}"><Run></Run></TextBlock>
+                        <TextBlock Name="TestCycleAve" Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="4" Style="{StaticResource CycleTextBlock}"></TextBlock>
+                    </Grid>
+                    <Grid Grid.Row="2">
+                        <TabControl TabStripPlacement ="Bottom">
+                            <TabItem Header="产量">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition></RowDefinition>
+                                        <RowDefinition></RowDefinition>
+                                        <RowDefinition></RowDefinition>
+                                        <RowDefinition></RowDefinition>
+                                        <RowDefinition></RowDefinition>
+
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1.3*"></ColumnDefinition>
+                                        <ColumnDefinition Width="0.4*"></ColumnDefinition>
+                                        <ColumnDefinition Width="0.3*"></ColumnDefinition>
+                                        <ColumnDefinition Width="1.3*"></ColumnDefinition>
+                                        <ColumnDefinition Width="0.4*"></ColumnDefinition>
+                                        <ColumnDefinition Width="0.3*"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="穴1数量" Style="{StaticResource TextBlockGrid}"></TextBlock>
+                                    <TextBlock Name="TestCount_0" Style="{StaticResource TextBlockGrid}" Grid.Column="1" HorizontalAlignment="Left"></TextBlock>
+                                    <TextBlock Text="片" Style="{StaticResource TextBlockGrid}" Grid.Column="2"></TextBlock>
+                                    <TextBlock Text="穴1良品数" Style="{StaticResource TextBlockGrid}" Grid.Column="3"></TextBlock>
+                                    <TextBlock Name="PassCount_0" Grid.Column="4" Style="{StaticResource TextBlockGrid}" HorizontalAlignment="Left"></TextBlock>
+                                    <TextBlock Text="片" Style="{StaticResource TextBlockGrid}" Grid.Column="5"></TextBlock>
+                                    <TextBlock Text="穴2数量" Grid.Row="1" Style="{StaticResource TextBlockGrid}"></TextBlock>
+                                    <TextBlock Name="TestCount_1" Style="{StaticResource TextBlockGrid}" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left"></TextBlock>
+                                    <TextBlock Text="片" Style="{StaticResource TextBlockGrid}" Grid.Row="1" Grid.Column="2"></TextBlock>
+                                    <TextBlock Text="穴2良品数" Style="{StaticResource TextBlockGrid}" Grid.Row="1" Grid.Column="3"></TextBlock>
+                                    <TextBlock Name="PassCount_1" Grid.Row="1" Grid.Column="4" Style="{StaticResource TextBlockGrid}" HorizontalAlignment="Left"></TextBlock>
+                                    <TextBlock Text="片" Style="{StaticResource TextBlockGrid}" Grid.Row="1" Grid.Column="5"></TextBlock>
+
+                                    <TextBlock Text="穴3数量" Grid.Row="2" Style="{StaticResource TextBlockGrid}"></TextBlock>
+                                    <TextBlock Name="TestCount_2" Style="{StaticResource TextBlockGrid}" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left"></TextBlock>
+                                    <TextBlock Text="片" Style="{StaticResource TextBlockGrid}" Grid.Row="2" Grid.Column="2"></TextBlock>
+                                    <TextBlock Text="穴3良品数" Style="{StaticResource TextBlockGrid}" Grid.Row="2" Grid.Column="3"></TextBlock>
+                                    <TextBlock Name="PassCount_2" Grid.Row="2" Grid.Column="4" Style="{StaticResource TextBlockGrid}" HorizontalAlignment="Left"></TextBlock>
+                                    <TextBlock Text="片" Style="{StaticResource TextBlockGrid}" Grid.Row="2" Grid.Column="5"></TextBlock>
+
+                                    <TextBlock Text="穴4数量" Grid.Row="3" Style="{StaticResource TextBlockGrid}"></TextBlock>
+                                    <TextBlock Name="TestCount_3" Style="{StaticResource TextBlockGrid}" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left"></TextBlock>
+                                    <TextBlock Text="片" Style="{StaticResource TextBlockGrid}" Grid.Row="3" Grid.Column="2"></TextBlock>
+                                    <TextBlock Text="穴4良品数" Style="{StaticResource TextBlockGrid}" Grid.Row="3" Grid.Column="3"></TextBlock>
+                                    <TextBlock Name="PassCount_3" Grid.Row="3" Grid.Column="4" Style="{StaticResource TextBlockGrid}" HorizontalAlignment="Left"></TextBlock>
+                                    <TextBlock Text="片" Style="{StaticResource TextBlockGrid}" Grid.Row="3" Grid.Column="5"></TextBlock>
+                                    <StackPanel Grid.Row="4" Grid.ColumnSpan="6" Orientation="Horizontal">
+                                        <TextBlock Style="{StaticResource TextBlockGrid}" Text="上料机直通率 = output / input = "></TextBlock>
+                                        <TextBlock Name="TestCount_Total1" Style="{StaticResource TextBlockGrid}" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left"></TextBlock>
+                                        <TextBlock Style="{StaticResource TextBlockGrid}" Text=" / "></TextBlock>
+                                        <TextBlock Name="TestCount_Total" Style="{StaticResource TextBlockGrid}" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left"></TextBlock>
+                                        <TextBlock Style="{StaticResource TextBlockGrid}" Text=" = "></TextBlock>
+                                        <TextBlock Name="Yield_Total" Grid.Row="4" Grid.Column="4" Style="{StaticResource TextBlockGrid}" HorizontalAlignment="Left"></TextBlock>
+                                        <TextBlock Text=" %" Style="{StaticResource TextBlockGrid}" Grid.Row="4" Grid.Column="5"></TextBlock>
+                                    </StackPanel>
+                                </Grid>
+                            </TabItem>
+                        </TabControl>
+                    </Grid>
+                </Grid>
+                
             </Grid>
         </Grid>
         <Grid Grid.Row="1" Name="ParameterPage" Visibility="Collapsed">
@@ -127,6 +254,12 @@
             </GroupBox>
         </Grid>
         <StatusBar Grid.Row="2">
+            <StatusBarItem x:Name="statusBarItem0">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Center">PLC1</TextBlock>
+                    <Ellipse Name="EllipsePLCState0" Style="{StaticResource EllipseStatusBase}"></Ellipse>
+                </StackPanel>
+            </StatusBarItem>
             <StatusBarItem x:Name="statusBarItem1">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock VerticalAlignment="Center">PLC1</TextBlock>
@@ -143,6 +276,18 @@
                 <StackPanel Orientation="Horizontal">
                     <TextBlock VerticalAlignment="Center">Robot</TextBlock>
                     <Ellipse Name="EllipseRobotState" Style="{StaticResource EllipseStatusBase}"></Ellipse>
+                </StackPanel>
+            </StatusBarItem>
+            <StatusBarItem x:Name="statusBarItem4">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Center">PLC4</TextBlock>
+                    <Ellipse Name="EllipsePLCState4" Style="{StaticResource EllipseStatusBase}"></Ellipse>
+                </StackPanel>
+            </StatusBarItem>
+            <StatusBarItem x:Name="statusBarItem5">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Center">PLC5</TextBlock>
+                    <Ellipse Name="EllipsePLCState5" Style="{StaticResource EllipseStatusBase}"></Ellipse>
                 </StackPanel>
             </StatusBarItem>
         </StatusBar>

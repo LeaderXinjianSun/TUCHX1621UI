@@ -8,7 +8,7 @@ namespace TUCHX1621UI.Model
 {
     public static class GlobalVars
     {
-        public static Fx5u Fx5u_left, Fx5u_mid;
+        public static Fx5u Fx5u_left1,Fx5u_left2, Fx5u_mid;
         public static string GetBanci()
         {
             string rs = "";
