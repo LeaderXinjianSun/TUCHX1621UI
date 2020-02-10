@@ -7,6 +7,7 @@ using BingLibrary.hjb.net;
 using BingLibrary.hjb.file;
 using System.IO;
 using BingLibrary.hjb;
+using System.Data;
 
 namespace TUCHX1621UI.Model
 {
@@ -21,10 +22,14 @@ namespace TUCHX1621UI.Model
         string Ip = "192.168.1.2";
         public bool IOReceiveStatus = false, TestSendStatus = false, TestReceiveStatus = false;
         string iniParameterPath = System.Environment.CurrentDirectory + "\\Parameter.ini";
+        string iniFilepath = @"d:\test.ini";
         public string[] BordBarcode = new string[2] { "Null", "Null" };
         public ProducInfo[][] BarInfo = new ProducInfo[2][] { new ProducInfo[15], new ProducInfo[15] };
         public Tester[] YanmadeTester = new Tester[4];
         public UploadSoftwareStatus[] uploadSoftwareStatus = new UploadSoftwareStatus[4];
+        public string[] TemporaryBordBarcode = new string[2] { "Null", "Null" };
+        public string[][] sampleContent = new string[8][] { new string[4], new string[4], new string[4], new string[4], new string[4], new string[4], new string[4], new string[4] };
+        public DateTime SamStart;
         #endregion
         #region 事件
         public delegate void PrintEventHandler(string ModelMessageStr);
@@ -52,7 +57,8 @@ namespace TUCHX1621UI.Model
                     BarInfo[i][j].TDate = DateTime.Now.ToString("yyyyMMdd");
                     BarInfo[i][j].TTime = DateTime.Now.ToString("HHmmss");
                 }
-            }            
+            }
+            SamStart = DateTime.Now;
             Run();
         }
         #endregion
@@ -220,11 +226,8 @@ namespace TUCHX1621UI.Model
                             string[] strs = s.Split(';');
                             switch (strs[0])
                             {
-                                case "ReleaseA"://区间号(0-7);产品1状态(3-5);产品2状态(3-5)
-                                    if (strs.Length == 4)
-                                    {
-                                        SaveRelease(0, strs);
-                                    }
+                                case "ReleaseA"://产品号(0-14);产品1状态(3-5)
+                                    SaveRelease(0, strs);
                                     break;
                                 case "ReleaseB":
                                     SaveRelease(1, strs);
@@ -239,6 +242,9 @@ namespace TUCHX1621UI.Model
                                 case "Finish":
                                     YanmadeTester[int.Parse(strs[1]) - 1].TestResult = strs[2] == "1" ? TestResult.Pass : TestResult.Ng;
                                     YanmadeTester[int.Parse(strs[1]) - 1].TestStatus = TestStatus.Tested;
+                                    break;
+                                case "CheckSample":
+                                    CheckSam();
                                     break;
                                 default:
                                     ModelPrint("无效指令： " + s);
@@ -266,6 +272,145 @@ namespace TUCHX1621UI.Model
             checkTestReceiveNet();
             IORevAnalysis();
             TestRevAnalysis();
+        }
+        async void CheckSam()
+        {
+            try
+            {
+                int ngItemCount = int.Parse(Inifile.INIGetStringValue(iniParameterPath, "Sample", "NGItemCount", "3"));
+                int nGItemLimit = int.Parse(Inifile.INIGetStringValue(iniParameterPath, "Sample", "NGItemLimit", "99")); 
+                string MNO = Inifile.INIGetStringValue(iniParameterPath, "System", "MachineID", "X1621_1");
+                Oracle oraDB = new Oracle("qddb04.eavarytech.com", "mesdb04", "ictdata", "ictdata*168");
+                if (oraDB.isConnect())
+                {
+                    for (int i = 0; i < ngItemCount; i++)
+                    {
+                        for (int j = 0; j < 4; j++)
+                        {
+                            string flexid = Inifile.INIGetStringValue(iniFilepath, "A", "id" + (j + 1).ToString(), "99999");
+                            string ngitem = Inifile.INIGetStringValue(iniParameterPath, "Sample", "NGItem" + i.ToString(), "Null");
+                            string stm = String.Format("Select * from fluke_data WHERE FL04 = '{0}' AND FL01 = '{1}' AND ITSDATE = '{2}' ORDER BY ITSDATE DESC, ITSTIME DESC", flexid, ngitem, DateTime.Now.ToString("yyyyMMdd"));
+                            DataSet s = oraDB.executeQuery(stm);
+                            DataTable dt = s.Tables[0];
+                            if (dt.Rows.Count > 0)
+                            {
+                                string datestr = (string)dt.Rows[0]["ITSDATE"];
+                                string timestr = (string)dt.Rows[0]["ITSTIME"];
+                                if (datestr.Length == 8 && (timestr.Length == 5 || timestr.Length == 6))
+                                {
+                                    if (timestr.Length == 5)
+                                    {
+                                        timestr = "0" + timestr;
+                                    }
+                                    string datetimestr = string.Empty;
+                                    datetimestr = string.Format("{0}/{1}/{2} {3}:{4}:{5}", datestr.Substring(0, 4), datestr.Substring(4, 2), datestr.Substring(6, 2), timestr.Substring(0, 2), timestr.Substring(2, 2), timestr.Substring(4, 2));
+                                    DateTime updatetime = Convert.ToDateTime(datetimestr);
+                                    TimeSpan sp = updatetime - SamStart;
+                                    if (sp.TotalSeconds > 0)
+                                    {
+                                        stm = String.Format("Select * from barsaminfo WHERE BARCODE = '{0}'", (string)dt.Rows[0]["BARCODE"]);
+                                        DataSet s1 = oraDB.executeQuery(stm);
+                                        DataTable dt1 = s1.Tables[0];
+                                        if (dt1.Rows.Count > 0)
+                                        {
+                                            try
+                                            {
+                                                //插入样本记录
+                                                string parnum = Inifile.INIGetStringValue(iniFilepath, "Other", "pn", "FHAPHS9");
+                                                string tres = ngitem.Length > 20 ? ngitem.Substring(0, 20) : ngitem;
+                                                stm = String.Format("INSERT INTO BARSAMREC (PARTNUM,SITEM,BARCODE,NGITEM,TRES,MNO,CDATE,CTIME,SR01) VALUES ('{0}','FLUKE','{1}','{2}','{3}','{4}','{5}','{6}','{7}')", parnum, (string)dt.Rows[0]["BARCODE"], (string)dt1.Rows[0]["NGITEM"], tres, MNO, DateTime.Now.ToString("yyyyMMdd"), DateTime.Now.ToString("HHmmss"), flexid);
+                                                oraDB.executeNonQuery(stm);
+                                                string filepath = "D:\\样本记录\\样本记录" + GlobalVars.GetBanci() + ".csv";
+                                                if (!Directory.Exists("D:\\样本记录"))
+                                                {
+                                                    Directory.CreateDirectory("D:\\样本记录");
+                                                }
+                                                if (!File.Exists(filepath))
+                                                {
+                                                    string[] heads = { "DateTime", "PARTNUM", "SITEM", "BARCODE", "NGITEM", "TRES", "MNO", "CDATE", "CTIME", "SR01" };
+                                                    Csvfile.savetocsv(filepath, heads);
+                                                }
+                                                string[] conte = { System.DateTime.Now.ToString(), parnum, "FLUKE", (string)dt.Rows[0]["BARCODE"], (string)dt1.Rows[0]["NGITEM"], tres, MNO, DateTime.Now.ToString("yyyyMMdd"), DateTime.Now.ToString("HHmmss"), flexid };
+                                                Csvfile.savetocsv(filepath, conte);
+                                                stm = String.Format("Select * from BARSAMREC WHERE BARCODE = '{0}'", (string)dt.Rows[0]["BARCODE"]);
+                                                DataSet samtimesds = oraDB.executeQuery(stm);
+                                                ModelPrint("插入样本记录 " + (string)dt.Rows[0]["BARCODE"] + " " + samtimesds.Tables[0].Rows.Count.ToString());
+                                                if (samtimesds.Tables[0].Rows.Count > nGItemLimit)
+                                                {
+                                                    ModelPrint((string)dt.Rows[0]["BARCODE"] + "样本记录" + samtimesds.Tables[0].Rows.Count.ToString() + " > " + nGItemLimit.ToString());
+                                                    sampleContent[i][j] = "Limit";
+                                                }
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                ModelPrint(ex.Message);
+                                            }
+                                            if (((string)dt1.Rows[0]["NGITEM"]).ToUpper() == ngitem.ToUpper())
+                                            {
+                                                sampleContent[i][j] = "OK";
+                                            }
+                                            else
+                                            {
+                                                sampleContent[i][j] = (string)dt1.Rows[0]["NGITEM"];
+                                            }
+                                        }
+                                        else
+                                        {
+                                            sampleContent[i][j] = "NoSam";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        sampleContent[i][j] = "NotNew";
+                                    }
+                                }
+                                else
+                                {
+                                    ModelPrint("时间格式错误");
+                                    sampleContent[i][j] = "Error";
+                                }
+                            }
+                            else
+                            {
+                                sampleContent[i][j] = "NoRecord";
+                            }
+                        }
+
+                    }
+                    //回复样本结果
+                    ModelPrint("UpdateCheckSam");
+                    bool resut = true;
+                    for (int i = 0; i < ngItemCount; i++)
+                    {
+                        for (int j = 0; j < 4; j++)
+                        {
+                            if (sampleContent[i][j] != "OK")
+                            {
+                                string resultString = "RestartSample;" + j.ToString() + ";" + i.ToString();
+                                if (TestSendStatus)
+                                {
+                                    await TestSentNet.SendAsync(resultString);
+                                }
+                                resut = false;
+                            }
+                        }
+                    }
+                    if (resut)
+                    {
+                        ModelPrint("EndSample");
+                        await TestSentNet.SendAsync("EndSample");
+                    }
+                }
+                else
+                {
+                    ModelPrint("样本查询Error:数据库连接失败");
+                }
+                oraDB.disconnect();
+            }
+            catch(Exception ex)
+            {
+                ModelPrint("样本查询Error:" + ex.Message);
+            }
         }
         public void ResetBord(int index)
         {
@@ -296,12 +441,8 @@ namespace TUCHX1621UI.Model
                 Mysql mysql = new Mysql();
                 if (mysql.Connect())
                 {
-                    string stm = "";
-                    for (int i = 0; i < 2 && index * 2 + i < 15; i++)
-                    {
-                        stm += "UPDATE BARBIND SET RESULT = '" + rststr[2 + i] + "' WHERE SCBARCODE = '" + BarInfo[_index][index * 2 + i].Barcode + "' AND SCBODBAR = '" + BarInfo[_index][index * 2 + i].BordBarcode
-                        + "' AND SDATE = '" + BarInfo[_index][index * 2 + i].TDate + "' AND STIME = '" + BarInfo[_index][index * 2 + i].TTime + "' AND PCSSER = '" + (index * 2 + i + 1).ToString() + "'";
-                    }
+                    string stm = "UPDATE BARBIND SET RESULT = '" + rststr[2] + "' WHERE SCBARCODE = '" + BarInfo[_index][index].Barcode + "' AND SCBODBAR = '" + BarInfo[_index][index].BordBarcode
+                        + "' AND SDATE = '" + BarInfo[_index][index].TDate + "' AND STIME = '" + BarInfo[_index][index].TTime + "' AND PCSSER = '" + (index + 1).ToString() + "'";
                     mysql.executeQuery(stm); 
                 }
                 mysql.DisConnect();

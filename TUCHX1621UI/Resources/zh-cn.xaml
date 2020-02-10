@@ -4,6 +4,7 @@
                     xmlns:local="clr-namespace:TUCHX1621UI">
     <s:String x:Key="MenuHomeProperty">主页</s:String>
     <s:String x:Key="MenuParameterProperty">参数</s:String>
+    <s:String x:Key="MenuSampleProperty">样本</s:String>
     <s:String x:Key="MenuMaterialProperty">耗材</s:String>
     <s:String x:Key="MenuLanguageProperty">语言</s:String>
 </ResourceDictionary>

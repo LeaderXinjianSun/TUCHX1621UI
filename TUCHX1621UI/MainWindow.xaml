@@ -23,6 +23,7 @@
         <Menu VerticalAlignment="Center">
             <MenuItem Header="{DynamicResource MenuHomeProperty}" Click="HomePageSelect"></MenuItem>
             <MenuItem Header="{DynamicResource MenuParameterProperty}" Click="ParameterPageSelect"></MenuItem>
+            <MenuItem Header="{DynamicResource MenuSampleProperty}" Click="SamplePageSelect"></MenuItem>
             <MenuItem Header="{DynamicResource MenuMaterialProperty}" Click="MaterialPageSelect"></MenuItem>
             <MenuItem Header="{DynamicResource MenuLanguageProperty}">
                 <MenuItem Header="简体" Click="LanguageSwitchChinese"></MenuItem>
@@ -64,6 +65,9 @@
                     <local:Tester x:Name="Tester1" Grid.Column="2" Margin="5"></local:Tester>
                     <local:Tester x:Name="Tester2" Grid.Column="3" Margin="5"></local:Tester>
                     <local:Tester x:Name="Tester3" Grid.Column="4" Margin="5"></local:Tester>
+                    <Grid Name="SampleGrid1" Grid.Row="1" Grid.ColumnSpan="6" Background="GreenYellow">
+                        <TextBlock Name="SampleTextBlock1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="26"></TextBlock>
+                    </Grid>
                 </Grid>
             </Grid>
             <TextBox Grid.Row="1" VerticalAlignment="Stretch" VerticalContentAlignment="Top" HorizontalContentAlignment="Left" Margin="1" x:Name="MsgTextBox" IsReadOnly="True" TextChanged="MsgTextBox_TextChanged"  FontSize="14" Background="Black" FontFamily="宋体" Foreground="White" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"></TextBox>
@@ -222,10 +226,164 @@
             <GroupBox Header="机台参数">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
+                        <TextBlock Text=" 线号1 " VerticalAlignment="Center"></TextBlock>
+                        <TextBox Name="LineID_1" Width="100" VerticalAlignment="Center" IsEnabled="False"></TextBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text=" 线号2 " VerticalAlignment="Center"></TextBlock>
+                        <TextBox Name="LineID_2" Width="100" VerticalAlignment="Center" IsEnabled="False"></TextBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
                         <TextBlock Text=" 机台编号 " VerticalAlignment="Center"></TextBlock>
-                        <TextBox Name="MachineID" Width="200" VerticalAlignment="Center"></TextBox>
+                        <TextBox Name="MachineID" Width="100" VerticalAlignment="Center"></TextBox>
                         <Button Width="60" Margin="20,0,10,0" Content="保存" Click="SaveParameterButtonClick"></Button>
                     </StackPanel>
+                    
+                </StackPanel>
+            </GroupBox>
+        </Grid>
+        <Grid Grid.Row="1" Name="SamplePage" Visibility="Collapsed">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid ShowGridLines="True">
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="1" Text="治具A左" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                <TextBlock Grid.Column="2" Text="治具A右" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                <TextBlock Grid.Column="3" Text="治具B左" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                <TextBlock Grid.Column="4" Text="治具B右" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                <TextBlock Name="NGItem0" Grid.Row="1" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                <TextBlock Name="NGItem1" Grid.Row="2" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                <TextBlock Name="NGItem2" Grid.Row="3" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                <TextBlock Name="NGItem3" Grid.Row="4" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                <TextBlock Name="NGItem4" Grid.Row="5" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                <TextBlock Name="NGItem5" Grid.Row="6" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                <TextBlock Name="NGItem6" Grid.Row="7" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                <TextBlock Name="NGItem7" Grid.Row="8" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                <Grid Name="SampleContentGrid1_1" Grid.Row="1" Grid.Column="1">
+                    <TextBlock Name="SampleContentTextBlock1_1" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+                <Grid Name="SampleContentGrid1_2" Grid.Row="1" Grid.Column="2">
+                    <TextBlock Name="SampleContentTextBlock1_2" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+                <Grid Name="SampleContentGrid1_3" Grid.Row="1" Grid.Column="3">
+                    <TextBlock Name="SampleContentTextBlock1_3" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+                <Grid Name="SampleContentGrid1_4" Grid.Row="1" Grid.Column="4">
+                    <TextBlock Name="SampleContentTextBlock1_4" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+
+                <Grid Name="SampleContentGrid2_1" Grid.Row="2" Grid.Column="1">
+                    <TextBlock Name="SampleContentTextBlock2_1" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+                <Grid Name="SampleContentGrid2_2" Grid.Row="2" Grid.Column="2">
+                    <TextBlock Name="SampleContentTextBlock2_2" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+                <Grid Name="SampleContentGrid2_3" Grid.Row="2" Grid.Column="3">
+                    <TextBlock Name="SampleContentTextBlock2_3" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+                <Grid Name="SampleContentGrid2_4" Grid.Row="2" Grid.Column="4">
+                    <TextBlock Name="SampleContentTextBlock2_4" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+
+                <Grid Name="SampleContentGrid3_1" Grid.Row="3" Grid.Column="1">
+                    <TextBlock Name="SampleContentTextBlock3_1" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+                <Grid Name="SampleContentGrid3_2" Grid.Row="3" Grid.Column="2">
+                    <TextBlock Name="SampleContentTextBlock3_2" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+                <Grid Name="SampleContentGrid3_3" Grid.Row="3" Grid.Column="3">
+                    <TextBlock Name="SampleContentTextBlock3_3" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+                <Grid Name="SampleContentGrid3_4" Grid.Row="3" Grid.Column="4">
+                    <TextBlock Name="SampleContentTextBlock3_4" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+
+                <Grid Name="SampleContentGrid4_1" Grid.Row="4" Grid.Column="1">
+                    <TextBlock Name="SampleContentTextBlock4_1" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+                <Grid Name="SampleContentGrid4_2" Grid.Row="4" Grid.Column="2">
+                    <TextBlock Name="SampleContentTextBlock4_2" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+                <Grid Name="SampleContentGrid4_3" Grid.Row="4" Grid.Column="3">
+                    <TextBlock Name="SampleContentTextBlock4_3" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+                <Grid Name="SampleContentGrid4_4" Grid.Row="4" Grid.Column="4">
+                    <TextBlock Name="SampleContentTextBlock4_4" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+
+                <Grid Name="SampleContentGrid5_1" Grid.Row="5" Grid.Column="1">
+                    <TextBlock Name="SampleContentTextBlock5_1" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+                <Grid Name="SampleContentGrid5_2" Grid.Row="5" Grid.Column="2">
+                    <TextBlock Name="SampleContentTextBlock5_2" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+                <Grid Name="SampleContentGrid5_3" Grid.Row="5" Grid.Column="3">
+                    <TextBlock Name="SampleContentTextBlock5_3" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+                <Grid Name="SampleContentGrid5_4" Grid.Row="5" Grid.Column="4">
+                    <TextBlock Name="SampleContentTextBlock5_4" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+
+                <Grid Name="SampleContentGrid6_1" Grid.Row="6" Grid.Column="1">
+                    <TextBlock Name="SampleContentTextBlock6_1" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+                <Grid Name="SampleContentGrid6_2" Grid.Row="6" Grid.Column="2">
+                    <TextBlock Name="SampleContentTextBlock6_2" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+                <Grid Name="SampleContentGrid6_3" Grid.Row="6" Grid.Column="3">
+                    <TextBlock Name="SampleContentTextBlock6_3" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+                <Grid Name="SampleContentGrid6_4" Grid.Row="6" Grid.Column="4">
+                    <TextBlock Name="SampleContentTextBlock6_4" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+
+                <Grid Name="SampleContentGrid7_1" Grid.Row="7" Grid.Column="1">
+                    <TextBlock Name="SampleContentTextBlock7_1" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+                <Grid Name="SampleContentGrid7_2" Grid.Row="7" Grid.Column="2">
+                    <TextBlock Name="SampleContentTextBlock7_2" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+                <Grid Name="SampleContentGrid7_3" Grid.Row="7" Grid.Column="3">
+                    <TextBlock Name="SampleContentTextBlock7_3" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+                <Grid Name="SampleContentGrid7_4" Grid.Row="7" Grid.Column="4">
+                    <TextBlock Name="SampleContentTextBlock7_4" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+
+                <Grid Name="SampleContentGrid8_1" Grid.Row="8" Grid.Column="1">
+                    <TextBlock Name="SampleContentTextBlock8_1" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+                <Grid Name="SampleContentGrid8_2" Grid.Row="8" Grid.Column="2">
+                    <TextBlock Name="SampleContentTextBlock8_2" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+                <Grid Name="SampleContentGrid8_3" Grid.Row="8" Grid.Column="3">
+                    <TextBlock Name="SampleContentTextBlock8_3" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+                <Grid Name="SampleContentGrid8_4" Grid.Row="8" Grid.Column="4">
+                    <TextBlock Name="SampleContentTextBlock8_4" VerticalAlignment="Center" TextAlignment="Center" FontSize="20"></TextBlock>
+                </Grid>
+            </Grid>
+            <Grid Grid.Column="1">
+                <StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="上一次测样本时刻"></TextBlock>
                         <TextBlock Name="LastSam1"></TextBlock>
@@ -250,8 +408,66 @@
                         <TextBlock Text="清洁倒计时"></TextBlock>
                         <TextBlock Name="SpanClean1" Foreground="Purple" FontSize="20"></TextBlock>
                     </StackPanel>
+                    <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10">
+                        <CheckBox Name="IsSam" Content="样本"></CheckBox>
+                        <CheckBox Name="IsClean" Content="清洁"></CheckBox>
+                        <Button Width="60" Height="60" Margin="0,10,0,0" Content="样本开始" Click="StartSamClick"></Button>
+                    </StackPanel>
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="NG项目1 " VerticalAlignment="Center"></TextBlock>
+                            <TextBox Name="NGItem0_text" Width="100" VerticalAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                            <TextBlock Text="治具1ID " VerticalAlignment="Center"></TextBlock>
+                            <TextBox Name="FlexID1" IsReadOnly="True" Width="60" VerticalAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="NG项目2 " VerticalAlignment="Center"></TextBlock>
+                            <TextBox Name="NGItem1_text" Width="100" VerticalAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                            <TextBlock Text="治具2ID " VerticalAlignment="Center"></TextBlock>
+                            <TextBox Name="FlexID2" IsReadOnly="True" Width="60" VerticalAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="NG项目3 " VerticalAlignment="Center"></TextBlock>
+                            <TextBox Name="NGItem2_text" Width="100" VerticalAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                            <TextBlock Text="治具3ID " VerticalAlignment="Center"></TextBlock>
+                            <TextBox Name="FlexID3" IsReadOnly="True" Width="60" VerticalAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="NG项目4 " VerticalAlignment="Center"></TextBlock>
+                            <TextBox Name="NGItem3_text" Width="100" VerticalAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                            <TextBlock Text="治具4ID " VerticalAlignment="Center"></TextBlock>
+                            <TextBox Name="FlexID4" IsReadOnly="True" Width="60" VerticalAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="NG项目5 " VerticalAlignment="Center"></TextBlock>
+                            <TextBox Name="NGItem4_text" Width="100" VerticalAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="NG项目6 " VerticalAlignment="Center"></TextBlock>
+                            <TextBox Name="NGItem5_text" Width="100" VerticalAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="NG项目7 " VerticalAlignment="Center"></TextBlock>
+                            <TextBox Name="NGItem6_text" Width="100" VerticalAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="NG项目8 " VerticalAlignment="Center"></TextBlock>
+                            <TextBox Name="NGItem7_text" Width="100" VerticalAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="样本数量 " VerticalAlignment="Center"></TextBlock>
+                            <TextBox Name="NGItem_count" Width="40" HorizontalContentAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                            <TextBlock Text=" 个" VerticalAlignment="Center"></TextBlock>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="样本次数 " VerticalAlignment="Center"></TextBlock>
+                            <TextBox Name="NGItemLimit_count" Width="40" HorizontalContentAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+                            <TextBlock Text=" 次" VerticalAlignment="Center"></TextBlock>
+                        </StackPanel>
+                        <Button Width="60" Height="60" Margin="0,10,0,0" Content="保存" Click="SaveSamParamClick"></Button>
+                    </StackPanel>
                 </StackPanel>
-            </GroupBox>
+            </Grid>
         </Grid>
         <StatusBar Grid.Row="2">
             <StatusBarItem x:Name="statusBarItem0">

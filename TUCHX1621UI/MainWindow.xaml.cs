@@ -34,11 +34,13 @@ namespace TUCHX1621UI
         #region 变量
         private EpsonRC90 epsonRC90;
         string iniParameterPath = System.Environment.CurrentDirectory + "\\Parameter.ini";
-        Scan scan1, scan2, scan3, scan4;
+        string iniFilepath = @"d:\test.ini";
+        Scan scan1, scan2;
         string LastBanci = "";
         uint liaoinput = 0;
+        DateTime lastSam1, lastClean1;
+        DateTime SamStartDatetime1, SamDateBigin1;     
         #endregion
-
         public MainWindow()
         {
             InitializeComponent();
@@ -160,11 +162,11 @@ namespace TUCHX1621UI
                 {
                     //A轨道
                     cycle1++;
-                    if (GlobalVars.Fx5u_left2.ReadM("M2797"))
+                    //if (GlobalVars.Fx5u_left2.ReadM("M2797"))
+                    if (false)
                     {
                         GlobalVars.Fx5u_left2.SetM("M2797", false);
-                        GlobalVars.Fx5u_left2.SetMultiM("M2596", new bool[5] { false, false, false, false, false });
-                        scan3.GetBarCode(Scan3GetBarcodeCallback);
+
                         this.Dispatcher.Invoke(new Action(() =>
                         {
                             AddMessage("接驳台1轨道A扫码");
@@ -265,11 +267,11 @@ namespace TUCHX1621UI
                     }
                     //B轨道
                     cycle2++;
-                    if (GlobalVars.Fx5u_left2.ReadM("M2803"))
+                    //if (GlobalVars.Fx5u_left2.ReadM("M2803"))
+                    if (false)
                     {
                         GlobalVars.Fx5u_left2.SetM("M2803", false);
-                        GlobalVars.Fx5u_left2.SetMultiM("M2602", new bool[5] { false, false, false, false, false });
-                        scan4.GetBarCode(Scan4GetBarcodeCallback);
+
                         this.Dispatcher.Invoke(new Action(() =>
                         {
                             AddMessage("接驳台1轨道B扫码");
@@ -388,11 +390,10 @@ namespace TUCHX1621UI
                 {
                     //A轨道
                     cycle1++;
-                    if (GlobalVars.Fx5u_left2.ReadM("M2797"))
+                    //if (GlobalVars.Fx5u_left2.ReadM("M2797"))
+                    if (false)
                     {
                         GlobalVars.Fx5u_left2.SetM("M2797", false);
-                        GlobalVars.Fx5u_left2.SetMultiM("M2596", new bool[5] { false, false, false, false, false });
-                        scan3.GetBarCode(Scan3GetBarcodeCallback2);
                         this.Dispatcher.Invoke(new Action(() =>
                         {
                             AddMessage("接驳台2轨道A扫码");
@@ -481,11 +482,10 @@ namespace TUCHX1621UI
                     }
                     //B轨道
                     cycle2++;
-                    if (GlobalVars.Fx5u_left2.ReadM("M2803"))
+                    //if (GlobalVars.Fx5u_left2.ReadM("M2803"))
+                    if (false)
                     {
                         GlobalVars.Fx5u_left2.SetM("M2803", false);
-                        GlobalVars.Fx5u_left2.SetMultiM("M2602", new bool[5] { false, false, false, false, false });
-                        scan4.GetBarCode(Scan4GetBarcodeCallback2);
                         this.Dispatcher.Invoke(new Action(() =>
                         {
                             AddMessage("接驳台1轨道B扫码");
@@ -593,7 +593,7 @@ namespace TUCHX1621UI
             try
             {
                 Station = int.Parse(Inifile.INIGetStringValue(iniParameterPath, "Station", "NUM", "-1"));
-                LineID1 = Inifile.INIGetStringValue(iniParameterPath, "System", "LineID1", "Line1");
+                LineID_1.Text = LineID1 = Inifile.INIGetStringValue(iniParameterPath, "System", "LineID1", "Line1");
                 LineID2 = Inifile.INIGetStringValue(iniParameterPath, "System", "LineID2", "Line2");
                 window1.Title = "鵬鼎控股 測試工程部 D5X TUCHX1621UI:" + Station.ToString();
                 MachineID.Text = Inifile.INIGetStringValue(iniParameterPath, "System", "MachineID", "X1621_1");
@@ -602,34 +602,60 @@ namespace TUCHX1621UI
                 string plc_ip = Inifile.INIGetStringValue(iniParameterPath, "System", "PLC2IP", "192.168.10.2");
                 int plc_port = int.Parse(Inifile.INIGetStringValue(iniParameterPath, "System", "PLC2PORT", "8000"));
                 GlobalVars.Fx5u_mid = new Fx5u(plc_ip, plc_port);
+                plc_ip = Inifile.INIGetStringValue(iniParameterPath, "System", "PLC4IP", "192.168.10.2");
+                plc_port = int.Parse(Inifile.INIGetStringValue(iniParameterPath, "System", "PLC4PORT", "8000"));
+                GlobalVars.Fx5u_right1 = new Fx5u(plc_ip, plc_port);
                 scan1 = new Scan();
                 string COM = Inifile.INIGetStringValue(iniParameterPath, "System", "ScanCOM1", "COM0");
                 scan1.ini(COM);
                 scan2 = new Scan();
                 COM = Inifile.INIGetStringValue(iniParameterPath, "System", "ScanCOM2", "COM1");
                 scan2.ini(COM);
+                IsSam.IsChecked = Inifile.INIGetStringValue(iniParameterPath, "Sample", "IsSam", "1") == "1";
+                IsClean.IsChecked = Inifile.INIGetStringValue(iniParameterPath, "Clean", "IsClean", "1") == "1";
+
+                lastSam1 = Convert.ToDateTime(Inifile.INIGetStringValue(iniParameterPath, "Sample", "LastSam1", "2019/1/1 00:00:00"));
+                LastSam1.Text = lastSam1.ToString();
+
+                lastClean1 = Convert.ToDateTime(Inifile.INIGetStringValue(iniParameterPath, "Clean", "LastClean1", "2019/1/1 00:00:00"));
+                LastClean1.Text = lastClean1.ToString();
+
+                FlexID1.Text = Inifile.INIGetStringValue(iniFilepath, "A", "id1", "99999");
+                FlexID2.Text = Inifile.INIGetStringValue(iniFilepath, "A", "id2", "99999");
+                FlexID3.Text = Inifile.INIGetStringValue(iniFilepath, "A", "id3", "99999");
+                FlexID4.Text = Inifile.INIGetStringValue(iniFilepath, "A", "id4", "99999");
+
+                NGItem0_text.Text = NGItem0.Text = Inifile.INIGetStringValue(iniParameterPath, "Sample", "NGItem0", "Null");
+                NGItem1_text.Text = NGItem1.Text = Inifile.INIGetStringValue(iniParameterPath, "Sample", "NGItem1", "Null");
+                NGItem2_text.Text = NGItem2.Text = Inifile.INIGetStringValue(iniParameterPath, "Sample", "NGItem2", "Null");
+                NGItem3_text.Text = NGItem3.Text = Inifile.INIGetStringValue(iniParameterPath, "Sample", "NGItem3", "Null");
+                NGItem4_text.Text = NGItem4.Text = Inifile.INIGetStringValue(iniParameterPath, "Sample", "NGItem4", "Null");
+                NGItem5_text.Text = NGItem5.Text = Inifile.INIGetStringValue(iniParameterPath, "Sample", "NGItem5", "Null");
+                NGItem6_text.Text = NGItem6.Text = Inifile.INIGetStringValue(iniParameterPath, "Sample", "NGItem6", "Null");
+                NGItem7_text.Text = NGItem7.Text = Inifile.INIGetStringValue(iniParameterPath, "Sample", "NGItem7", "Null");
+                NGItem_count.Text = Inifile.INIGetStringValue(iniParameterPath, "Sample", "NGItemCount", "3");
+                NGItemLimit_count.Text = Inifile.INIGetStringValue(iniParameterPath, "Sample", "NGItemLimit", "99");
+
                 switch (Station)
                 {
                     case 1:
                         statusBarItem0.Visibility = Visibility.Collapsed;
                         statusBarItem1.Visibility = Visibility.Collapsed;
+                        plc_ip = Inifile.INIGetStringValue(iniParameterPath, "System", "PLC5IP", "192.168.10.2");
+                        plc_port = int.Parse(Inifile.INIGetStringValue(iniParameterPath, "System", "PLC5PORT", "8000"));
+                        GlobalVars.Fx5u_right2 = new Fx5u(plc_ip, plc_port);
                         Task.Run(() => { StationEnterRun(); });
                         AddMessage("机台站:" + Station.ToString() + ";轨道入口功能开启");
                         break;
                     case 2:
                     case 6:
+                        statusBarItem5.Visibility = Visibility.Collapsed;
                         plc_ip = Inifile.INIGetStringValue(iniParameterPath, "System", "PLC0IP", "192.168.10.2");
                         plc_port = int.Parse(Inifile.INIGetStringValue(iniParameterPath, "System", "PLC0PORT", "8000"));
                         GlobalVars.Fx5u_left1 = new Fx5u(plc_ip, plc_port);
                         plc_ip = Inifile.INIGetStringValue(iniParameterPath, "System", "PLC1IP", "192.168.10.2");
-                        plc_port = int.Parse(Inifile.INIGetStringValue(iniParameterPath, "System", "PLC0P1RT", "8000"));
+                        plc_port = int.Parse(Inifile.INIGetStringValue(iniParameterPath, "System", "PLC1PORT", "8000"));
                         GlobalVars.Fx5u_left2 = new Fx5u(plc_ip, plc_port);
-                        scan3 = new Scan();
-                        COM = Inifile.INIGetStringValue(iniParameterPath, "System", "ScanCOM3", "COM0");
-                        scan3.ini(COM);
-                        scan4 = new Scan();
-                        COM = Inifile.INIGetStringValue(iniParameterPath, "System", "ScanCOM4", "COM1");
-                        scan4.ini(COM);
                         switch (Station)
                         {
                             case 2:
@@ -647,7 +673,22 @@ namespace TUCHX1621UI
                     case 3:
                     case 4:
                     case 5:
+                        plc_ip = Inifile.INIGetStringValue(iniParameterPath, "System", "PLC1IP", "192.168.10.2");
+                        plc_port = int.Parse(Inifile.INIGetStringValue(iniParameterPath, "System", "PLC1PORT", "8000"));
+                        GlobalVars.Fx5u_left2 = new Fx5u(plc_ip, plc_port);
                         statusBarItem0.Visibility = Visibility.Collapsed;
+                        switch (Station)
+                        {
+                            case 5:
+                                plc_ip = Inifile.INIGetStringValue(iniParameterPath, "System", "PLC5IP", "192.168.10.2");
+                                plc_port = int.Parse(Inifile.INIGetStringValue(iniParameterPath, "System", "PLC5PORT", "8000"));
+                                GlobalVars.Fx5u_right2 = new Fx5u(plc_ip, plc_port);
+                                break;
+                            default:
+                                statusBarItem5.Visibility = Visibility.Collapsed;
+                                break;
+                        }
+                        
                         break;
                     default:
                         break;
@@ -672,12 +713,14 @@ namespace TUCHX1621UI
         {
             HomePage.Visibility = Visibility.Visible;
             ParameterPage.Visibility = Visibility.Collapsed;
+            SamplePage.Visibility = Visibility.Collapsed;
         }
 
         private void ParameterPageSelect(object sender, RoutedEventArgs e)
         {
             HomePage.Visibility = Visibility.Collapsed;
             ParameterPage.Visibility = Visibility.Visible;
+            SamplePage.Visibility = Visibility.Collapsed;
         }
 
         private void MsgTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -710,6 +753,64 @@ namespace TUCHX1621UI
             {
                 AddMessage(str);
             }));
+            #region 清洁
+            if (str.Contains("CheckClean"))
+            {
+                this.Dispatcher.Invoke(new Action(async () => {
+                    if ((DateTime.Now - lastClean1.AddHours(2)).TotalSeconds > 0 && IsClean.IsChecked.Value)
+                    {
+                        await epsonRC90.TestSentNet.SendAsync("StartClean");
+                        lastClean1 = DateTime.Now;
+                        LastClean1.Text = lastClean1.ToString();
+                        Inifile.INIWriteValue(iniParameterPath, "Clean", "LastClean1", lastClean1.ToString());
+                    }
+                    else
+                    {
+                        await epsonRC90.TestSentNet.SendAsync("EndClean");
+                    }
+                }));
+            }
+            #endregion
+            #region 样本
+            if (str.Contains("AskSample"))
+            {
+                this.Dispatcher.Invoke(new Action(async () => {
+                    if ((DateTime.Now - SamStartDatetime1).TotalSeconds > 0 && IsSam.IsChecked.Value)
+                    {
+                        await epsonRC90.TestSentNet.SendAsync("SampleTest;OK");
+                        if (epsonRC90.TestSendStatus && IsSam.IsChecked.Value)
+                        {
+                            await epsonRC90.TestSentNet.SendAsync("StartSample");
+                        }
+                    }
+                    else
+                    {
+                        await epsonRC90.TestSentNet.SendAsync("SampleTest;NG");
+                    }
+                }));
+            }
+            if (str.Contains("StartSample"))
+            {
+                epsonRC90.SamStart = DateTime.Now;
+                TUCHX1621UI.Model.Tester.IsInSampleMode = true;
+                for (int i = 0; i < 8; i++)
+                {
+                    for (int j = 0; j < 4; j++)
+                    {
+                        epsonRC90.sampleContent[i][j] = "Null";
+                    }
+                }
+            }
+            if (str.Contains("EndSample"))
+            {
+                lastSam1 = DateTime.Now;
+                TUCHX1621UI.Model.Tester.IsInSampleMode = false;
+                Inifile.INIWriteValue(iniParameterPath, "Sample", "LastSam1", lastSam1.ToString());
+                this.Dispatcher.Invoke(new Action(() => {
+                    LastSam1.Text = lastSam1.ToString();
+                }));
+            }
+            #endregion
         }
         async void UpdateUI()
         {
@@ -878,7 +979,6 @@ namespace TUCHX1621UI
                     Yield_Total.Text = "0";
                 }
                 #endregion
-
                 #region 时间统计
                 TestTime0.Text = epsonRC90.YanmadeTester[0].TestSpan.ToString("F1");
                 TestTime1.Text = epsonRC90.YanmadeTester[1].TestSpan.ToString("F1");
@@ -894,6 +994,74 @@ namespace TUCHX1621UI
                 TestCycle3.Text = epsonRC90.YanmadeTester[3].TestCycle.ToString("F1");
 
                 TestCycleAve.Text = ((epsonRC90.YanmadeTester[0].TestCycle + epsonRC90.YanmadeTester[1].TestCycle + epsonRC90.YanmadeTester[2].TestCycle + epsonRC90.YanmadeTester[3].TestCycle) / 4).ToString("F1");
+                #endregion
+                #region 样本
+                SamDateBigin1 = lastSam1.AddHours(4);
+                SamStartDatetime1 = lastSam1.AddHours(6);
+                NextSam1.Text = SamStartDatetime1.ToString();
+                SpanSam1.Text = (SamStartDatetime1 - DateTime.Now).ToString().Split(new string[] { "." }, StringSplitOptions.RemoveEmptyEntries)[0];
+                SampleGrid1.Visibility = (DateTime.Now - SamDateBigin1).TotalSeconds > 0 && IsSam.IsChecked.Value ? Visibility.Visible : Visibility.Collapsed;
+                if ((DateTime.Now - SamDateBigin1).TotalSeconds > 0 && IsSam.IsChecked.Value)
+                {
+                    if (TUCHX1621UI.Model.Tester.IsInSampleMode)
+                    {
+                        SampleTextBlock1.Text = "样本测试中";
+                    }
+                    else
+                    {
+                        if ((DateTime.Now - SamStartDatetime1).TotalSeconds < 0)
+                        {
+                            SampleTextBlock1.Text = "请测样本";
+                        }
+                        else
+                        {
+                            SampleTextBlock1.Text = "强制样本";
+                        }
+                    }
+                }
+                SampleContentTextBlock1_1.Text = epsonRC90.sampleContent[0][0];
+                SampleContentTextBlock1_2.Text = epsonRC90.sampleContent[0][1];
+                SampleContentTextBlock1_3.Text = epsonRC90.sampleContent[0][2];
+                SampleContentTextBlock1_4.Text = epsonRC90.sampleContent[0][3];
+
+                SampleContentTextBlock2_1.Text = epsonRC90.sampleContent[1][0];
+                SampleContentTextBlock2_2.Text = epsonRC90.sampleContent[1][1];
+                SampleContentTextBlock2_3.Text = epsonRC90.sampleContent[1][2];
+                SampleContentTextBlock2_4.Text = epsonRC90.sampleContent[1][3];
+
+                SampleContentTextBlock3_1.Text = epsonRC90.sampleContent[2][0];
+                SampleContentTextBlock3_2.Text = epsonRC90.sampleContent[2][1];
+                SampleContentTextBlock3_3.Text = epsonRC90.sampleContent[2][2];
+                SampleContentTextBlock3_4.Text = epsonRC90.sampleContent[2][3];
+
+                SampleContentTextBlock4_1.Text = epsonRC90.sampleContent[3][0];
+                SampleContentTextBlock4_2.Text = epsonRC90.sampleContent[3][1];
+                SampleContentTextBlock4_3.Text = epsonRC90.sampleContent[3][2];
+                SampleContentTextBlock4_4.Text = epsonRC90.sampleContent[3][3];
+
+                SampleContentTextBlock5_1.Text = epsonRC90.sampleContent[4][0];
+                SampleContentTextBlock5_2.Text = epsonRC90.sampleContent[4][1];
+                SampleContentTextBlock5_3.Text = epsonRC90.sampleContent[4][2];
+                SampleContentTextBlock5_4.Text = epsonRC90.sampleContent[4][3];
+
+                SampleContentTextBlock6_1.Text = epsonRC90.sampleContent[5][0];
+                SampleContentTextBlock6_2.Text = epsonRC90.sampleContent[5][1];
+                SampleContentTextBlock6_3.Text = epsonRC90.sampleContent[5][2];
+                SampleContentTextBlock6_4.Text = epsonRC90.sampleContent[5][3];
+
+                SampleContentTextBlock7_1.Text = epsonRC90.sampleContent[6][0];
+                SampleContentTextBlock7_2.Text = epsonRC90.sampleContent[6][1];
+                SampleContentTextBlock7_3.Text = epsonRC90.sampleContent[6][2];
+                SampleContentTextBlock7_4.Text = epsonRC90.sampleContent[6][3];
+
+                SampleContentTextBlock8_1.Text = epsonRC90.sampleContent[7][0];
+                SampleContentTextBlock8_2.Text = epsonRC90.sampleContent[7][1];
+                SampleContentTextBlock8_3.Text = epsonRC90.sampleContent[7][2];
+                SampleContentTextBlock8_4.Text = epsonRC90.sampleContent[7][3];
+                #endregion
+                #region 清洁
+                NextClean1.Text = lastClean1.AddHours(2).ToString();
+                SpanClean1.Text = (lastClean1.AddHours(2) - DateTime.Now).ToString().Split(new string[] { "." }, StringSplitOptions.RemoveEmptyEntries)[0];
                 #endregion
             }
         }
@@ -930,6 +1098,7 @@ namespace TUCHX1621UI
         }
         void Scan1GetBarcodeCallback(string barcode)
         {
+            epsonRC90.TemporaryBordBarcode[0] = barcode;
             if (barcode != "Error")
             {
                 Mysql mysql = new Mysql();
@@ -941,68 +1110,36 @@ namespace TUCHX1621UI
                     if (dt.Rows.Count > 0)
                     {
                         if (dt.Rows[0]["STATUS"] == DBNull.Value)
-                        {
-                            stm = "INSERT INTO BODMSG (SCBODBAR, STATUS) VALUES('" + barcode + "','ON')";
-                            mysql.executeQuery(stm);
-                            epsonRC90.BordBarcode[0] = barcode;
-                            AddMessage("板 " + barcode + " 绑定");
+                        {                           
                             GlobalVars.Fx5u_mid.SetM("M2600", true);
                             switch (Station)
                             {
                                 case 1:
-                                    stm = "UPDATE BODLINE SET Station9 = Station9 - 1 , Station1 = 1 WHERE WHERE LineID = '" + LineID1 + "'";
+                                    DockStation1Check(0);
                                     break;
-                                case 2:
-                                case 3:
-                                case 4:
                                 case 5:
-                                    stm = "UPDATE BODLINE SET Station10 = Station10 - 1 , Station" + Station.ToString() + " = 1 WHERE WHERE LineID = '" + LineID1 + "'";
-                                    break;
-                                case 6:
-                                    stm = "UPDATE BODLINE SET Station11 = Station11 - 1 , Station6 = 1 WHERE WHERE LineID = '" + LineID1 + "'";
+                                    DockStation2Check(0);
                                     break;
                                 default:
                                     break;
                             }
-                            mysql.executeQuery(stm);
-                            this.Dispatcher.Invoke(new Action(() =>
-                            {
-                                AddMessage("线A上顶1块板");
-                            }));
-                            epsonRC90.ResetBord(0);
                         }
                         else
                         {
                             if ((string)dt.Rows[0]["STATUS"] == "OFF")
                             {
-                                stm = "INSERT INTO BODMSG (SCBODBAR, STATUS) VALUES('" + barcode + "','ON')";
-                                mysql.executeQuery(stm);
-                                epsonRC90.BordBarcode[0] = barcode;
-                                AddMessage("板 " + barcode + " 绑定");
                                 GlobalVars.Fx5u_mid.SetM("M2600", true);
                                 switch (Station)
                                 {
                                     case 1:
-                                        stm = "UPDATE BODLINE SET Station9 = Station9 - 1 , Station1 = 1 WHERE WHERE LineID = '" + LineID1 + "'";
+                                        DockStation1Check(0);
                                         break;
-                                    case 2:
-                                    case 3:
-                                    case 4:
                                     case 5:
-                                        stm = "UPDATE BODLINE SET Station10 = Station10 - 1 , Station" + Station.ToString() + " = 1 WHERE WHERE LineID = '" + LineID1 + "'";
-                                        break;
-                                    case 6:
-                                        stm = "UPDATE BODLINE SET Station11 = Station11 - 1 , Station6 = 1 WHERE WHERE LineID = '" + LineID1 + "'";
+                                        DockStation2Check(0);
                                         break;
                                     default:
                                         break;
                                 }
-                                mysql.executeQuery(stm);
-                                this.Dispatcher.Invoke(new Action(() =>
-                                {
-                                    AddMessage("线A上顶1块板");
-                                }));
-                                epsonRC90.ResetBord(0);
                             }
                             else
                             {
@@ -1013,34 +1150,18 @@ namespace TUCHX1621UI
                     }
                     else
                     {
-                        stm = "INSERT INTO BODMSG (SCBODBAR, STATUS) VALUES('" + barcode + "','ON')";
-                        mysql.executeQuery(stm);
-                        epsonRC90.BordBarcode[0] = barcode;
-                        AddMessage("板 " + barcode + " 绑定");
                         GlobalVars.Fx5u_mid.SetM("M2600", true);
                         switch (Station)
                         {
                             case 1:
-                                stm = "UPDATE BODLINE SET Station9 = Station9 - 1 , Station1 = 1 WHERE WHERE LineID = '" + LineID1 + "'";
+                                DockStation1Check(0);
                                 break;
-                            case 2:
-                            case 3:
-                            case 4:
                             case 5:
-                                stm = "UPDATE BODLINE SET Station10 = Station10 - 1 , Station" + Station.ToString() + " = 1 WHERE WHERE LineID = '" + LineID1 + "'";
-                                break;
-                            case 6:
-                                stm = "UPDATE BODLINE SET Station11 = Station11 - 1 , Station6 = 1 WHERE WHERE LineID = '" + LineID1 + "'";
+                                DockStation2Check(0);
                                 break;
                             default:
                                 break;
                         }
-                        mysql.executeQuery(stm);
-                        this.Dispatcher.Invoke(new Action(() =>
-                        {
-                            AddMessage("线A上顶1块板");
-                        }));
-                        epsonRC90.ResetBord(0);
                     }
                     GlobalVars.Fx5u_mid.SetM("M2597", true);
                 }
@@ -1056,8 +1177,104 @@ namespace TUCHX1621UI
                 GlobalVars.Fx5u_mid.SetM("M2598", true);
             }
         }
+        void DockStation1Check(int lineIndex)
+        {
+            string lineid = lineIndex == 0 ? LineID1 : LineID2;
+            try
+            {
+                Mysql mysql = new Mysql();
+                if (mysql.Connect())
+                {
+                    string stm = "SELECT * FROM BODLINE WHERE LineID = '" + lineid + "' ORDER BY SIDATE DESC";
+                    DataSet ds = mysql.Select(stm);
+                    DataTable dt = ds.Tables["table0"];
+                    if (dt.Rows.Count > 0)
+                    {
+                        int bordcount = (int)dt.Rows[0]["Station2"] + (int)dt.Rows[0]["Station3"] + (int)dt.Rows[0]["Station4"] + (int)dt.Rows[0]["Station5"] + (int)dt.Rows[0]["Station6"] + (int)dt.Rows[0]["Station10"] + (int)dt.Rows[0]["Station11"];
+                        if (bordcount < 5)//轨道+测试机板数量 < 5 不存储，放板
+                        {
+                            if (lineIndex == 0)
+                            {
+                                GlobalVars.Fx5u_right1.SetM("M2596", true);
+                                this.Dispatcher.Invoke(new Action(() =>
+                                {
+                                    AddMessage("线A内接驳台1后板数:" + bordcount.ToString() + " < 5,直接放板");
+                                }));
+                            }
+                            else
+                            {
+                                //B轨道
+                                GlobalVars.Fx5u_right1.SetM("M2602", true);
+                                this.Dispatcher.Invoke(new Action(() =>
+                                {
+                                    AddMessage("线B内接驳台1后板数:" + bordcount.ToString() + " < 5,直接放板");
+                                }));
+                            }
+                        }
+                        else
+                        {
+                            int station8count = (int)dt.Rows[0]["Station8"];
+                            if (station8count < 5)//轨道+测试机板数量 >= 5 存储，接驳台2#数量<5，不存储，放板
+                            {
+                                if (lineIndex == 0)
+                                {
+                                    GlobalVars.Fx5u_right1.SetM("M2596", true);
+                                    this.Dispatcher.Invoke(new Action(() =>
+                                    {
+                                        AddMessage("线A内接驳台2板数:" + station8count.ToString() + " < 5,直接放板");
+                                    }));
+                                }
+                                else
+                                {
+                                    //B轨道
+                                    GlobalVars.Fx5u_right1.SetM("M2602", true);
+                                    this.Dispatcher.Invoke(new Action(() =>
+                                    {
+                                        AddMessage("线B内接驳台1后板数:" + bordcount.ToString() + " < 5,直接放板");
+                                    }));
+                                }
+
+                            }
+                            else
+                            {
+                                int station7count = (int)dt.Rows[0]["Station7"];
+                                if (station7count < 10) //轨道 + 测试机板数量 >= 5 存储，接驳台2#数量>=5，本身已存板数<10，存储
+                                {
+                                    if (lineIndex == 0)
+                                    {
+                                        GlobalVars.Fx5u_right1.SetM("M2597", true);
+                                        this.Dispatcher.Invoke(new Action(() =>
+                                        {
+                                            AddMessage("线A内接驳台1板数:" + station7count.ToString() + " < 10,存储板");
+                                        }));
+                                    }
+                                    else
+                                    {
+                                        //B轨道
+                                        GlobalVars.Fx5u_right1.SetM("M2603", true);
+                                        this.Dispatcher.Invoke(new Action(() =>
+                                        {
+                                            AddMessage("线B内接驳台1板数:" + station7count.ToString() + " < 10,存储板");
+                                        }));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                mysql.DisConnect();
+            }
+            catch (Exception ex)
+            {
+                this.Dispatcher.Invoke(new Action(() =>
+                {
+                    AddMessage(ex.Message);
+                }));
+            }
+        }
         void Scan2GetBarcodeCallback(string barcode)
         {
+            epsonRC90.TemporaryBordBarcode[1] = barcode;
             if (barcode != "Error")
             {
                 Mysql mysql = new Mysql();
@@ -1070,67 +1287,36 @@ namespace TUCHX1621UI
                     {
                         if (dt.Rows[0]["STATUS"] == DBNull.Value)
                         {
-                            stm = "INSERT INTO BODMSG (SCBODBAR, STATUS) VALUES('" + barcode + "','ON')";
-                            mysql.executeQuery(stm);
-                            epsonRC90.BordBarcode[1] = barcode;
-                            AddMessage("板 " + barcode + " 绑定");
+
                             GlobalVars.Fx5u_mid.SetM("M2605", true);
                             switch (Station)
                             {
                                 case 1:
-                                    stm = "UPDATE BODLINE SET Station9 = Station9 - 1 , Station1 = 1 WHERE WHERE LineID = '" + LineID2 + "'";
+                                    DockStation1Check(1);
                                     break;
-                                case 2:
-                                case 3:
-                                case 4:
                                 case 5:
-                                    stm = "UPDATE BODLINE SET Station10 = Station10 - 1 , Station" + Station.ToString() + " = 1 WHERE WHERE LineID = '" + LineID2 + "'";
-                                    break;
-                                case 6:
-                                    stm = "UPDATE BODLINE SET Station11 = Station11 - 1 , Station6 = 1 WHERE WHERE LineID = '" + LineID2 + "'";
+                                    DockStation2Check(1);
                                     break;
                                 default:
                                     break;
                             }
-                            mysql.executeQuery(stm);
-                            this.Dispatcher.Invoke(new Action(() =>
-                            {
-                                AddMessage("线B上顶1块板");
-                            }));
-                            epsonRC90.ResetBord(1);
                         }
                         else
                         {
                             if ((string)dt.Rows[0]["STATUS"] == "OFF")
                             {
-                                stm = "INSERT INTO BODMSG (SCBODBAR, STATUS) VALUES('" + barcode + "','ON')";
-                                mysql.executeQuery(stm);
-                                epsonRC90.BordBarcode[1] = barcode;
-                                AddMessage("板 " + barcode + " 绑定");
                                 GlobalVars.Fx5u_mid.SetM("M2605", true);
                                 switch (Station)
                                 {
                                     case 1:
-                                        stm = "UPDATE BODLINE SET Station9 = Station9 - 1 , Station1 = 1 WHERE WHERE LineID = '" + LineID2 + "'";
+                                        DockStation1Check(1);
                                         break;
-                                    case 2:
-                                    case 3:
-                                    case 4:
                                     case 5:
-                                        stm = "UPDATE BODLINE SET Station10 = Station10 - 1 , Station" + Station.ToString() + " = 1 WHERE WHERE LineID = '" + LineID2 + "'";
-                                        break;
-                                    case 6:
-                                        stm = "UPDATE BODLINE SET Station11 = Station11 - 1 , Station6 = 1 WHERE WHERE LineID = '" + LineID2 + "'";
+                                        DockStation2Check(1);
                                         break;
                                     default:
                                         break;
                                 }
-                                mysql.executeQuery(stm);
-                                this.Dispatcher.Invoke(new Action(() =>
-                                {
-                                    AddMessage("线B上顶1块板");
-                                }));
-                                epsonRC90.ResetBord(1);
                             }
                             else
                             {
@@ -1140,35 +1326,19 @@ namespace TUCHX1621UI
                         }
                     }
                     else
-                    {
-                        stm = "INSERT INTO BODMSG (SCBODBAR, STATUS) VALUES('" + barcode + "','ON')";
-                        mysql.executeQuery(stm);
-                        epsonRC90.BordBarcode[1] = barcode;
-                        AddMessage("板 " + barcode + " 绑定");
+                    {                        
                         GlobalVars.Fx5u_mid.SetM("M2605", true);
                         switch (Station)
                         {
                             case 1:
-                                stm = "UPDATE BODLINE SET Station9 = Station9 - 1 , Station1 = 1 WHERE WHERE LineID = '" + LineID2 + "'";
+                                DockStation1Check(1);
                                 break;
-                            case 2:
-                            case 3:
-                            case 4:
                             case 5:
-                                stm = "UPDATE BODLINE SET Station10 = Station10 - 1 , Station" + Station.ToString() + " = 1 WHERE WHERE LineID = '" + LineID2 + "'";
-                                break;
-                            case 6:
-                                stm = "UPDATE BODLINE SET Station11 = Station11 - 1 , Station6 = 1 WHERE WHERE LineID = '" + LineID2 + "'";
+                                DockStation2Check(1);
                                 break;
                             default:
                                 break;
                         }
-                        mysql.executeQuery(stm);
-                        this.Dispatcher.Invoke(new Action(() =>
-                        {
-                            AddMessage("线B上顶1块板");
-                        }));
-                        epsonRC90.ResetBord(1);
                     }
                     GlobalVars.Fx5u_mid.SetM("M2602", true);
                 }
@@ -1184,421 +1354,25 @@ namespace TUCHX1621UI
                 GlobalVars.Fx5u_mid.SetM("M2603", true);
             }
         }
-        void Scan3GetBarcodeCallback(string barcode)
+        void DockStation2Check(int lineIndex)
         {
-            if (barcode != "Error")
+            string lineid = lineIndex == 0 ? LineID1 : LineID2;
+            try
             {
                 Mysql mysql = new Mysql();
                 if (mysql.Connect())
                 {
-                    string stm = "SELECT * FROM BODMSG WHERE SCBODBAR = '" + barcode + "' ORDER BY SIDATE DESC LIMIT 0,5";
+                    string stm = "SELECT * FROM BODLINE WHERE LineID = '" + lineid + "' ORDER BY SIDATE DESC";
                     DataSet ds = mysql.Select(stm);
                     DataTable dt = ds.Tables["table0"];
                     if (dt.Rows.Count > 0)
                     {
-                        if (dt.Rows[0]["STATUS"] == DBNull.Value)
+                        int bordcount = (int)dt.Rows[0]["Station6"] + (int)dt.Rows[0]["Station11"];
+                        if (bordcount < 1)//轨道+测试机板数量 < 1 不存储，放板
                         {
-                            stm = "SELECT * FROM BODLINE WHERE LineID = '" + LineID1 + "' ORDER BY SIDATE DESC";
-                            ds = mysql.Select(stm);
-                            dt = ds.Tables["table0"];
-                            if (dt.Rows.Count > 0)
+                            if (lineIndex == 0)
                             {
-                                int bordcount = (int)dt.Rows[0]["Station2"] + (int)dt.Rows[0]["Station3"] + (int)dt.Rows[0]["Station4"] + (int)dt.Rows[0]["Station5"] + (int)dt.Rows[0]["Station6"] + (int)dt.Rows[0]["Station10"] + (int)dt.Rows[0]["Station11"];
-                                if (bordcount < 5)//轨道+测试机板数量 < 5 不存储，放板
-                                {
-                                    GlobalVars.Fx5u_left2.SetM("M2596", true);
-                                    this.Dispatcher.Invoke(new Action(() =>
-                                    {
-                                        AddMessage("线A内接驳台1后板数:" + bordcount.ToString() + " < 5,直接放板");
-                                    }));
-                                }
-                                else
-                                {
-                                    int station8count = (int)dt.Rows[0]["Station8"];
-                                    if (station8count < 5)//轨道+测试机板数量 >= 5 存储，接驳台2#数量<5，不存储，放板
-                                    {
-                                        GlobalVars.Fx5u_left2.SetM("M2596", true);
-                                        this.Dispatcher.Invoke(new Action(() =>
-                                        {
-                                            AddMessage("线A内接驳台2板数:" + station8count.ToString() + " < 5,直接放板");
-                                        }));
-                                    }
-                                    else
-                                    {
-                                        int station7count = (int)dt.Rows[0]["Station7"];
-                                        if (station7count < 10) //轨道 + 测试机板数量 >= 5 存储，接驳台2#数量>=5，本身已存板数<10，存储
-                                        {
-                                            GlobalVars.Fx5u_left2.SetM("M2597", true);
-                                            this.Dispatcher.Invoke(new Action(() =>
-                                            {
-                                                AddMessage("线A内接驳台1板数:" + station7count.ToString() + " < 10,存储板");
-                                            }));
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if ((string)dt.Rows[0]["STATUS"] == "OFF")
-                            {
-                                stm = "SELECT * FROM BODLINE WHERE LineID = '" + LineID1 + "' ORDER BY SIDATE DESC";
-                                ds = mysql.Select(stm);
-                                dt = ds.Tables["table0"];
-                                if (dt.Rows.Count > 0)
-                                {
-                                    int bordcount = (int)dt.Rows[0]["Station2"] + (int)dt.Rows[0]["Station3"] + (int)dt.Rows[0]["Station4"] + (int)dt.Rows[0]["Station5"] + (int)dt.Rows[0]["Station6"] + (int)dt.Rows[0]["Station10"] + (int)dt.Rows[0]["Station11"];
-                                    if (bordcount < 5)//轨道+测试机板数量 < 5 不存储，放板
-                                    {
-                                        GlobalVars.Fx5u_left2.SetM("M2596", true);
-                                        this.Dispatcher.Invoke(new Action(() =>
-                                        {
-                                            AddMessage("线A内接驳台1后板数:" + bordcount.ToString() + " < 5,直接放板");
-                                        }));
-                                    }
-                                    else
-                                    {
-                                        int station8count = (int)dt.Rows[0]["Station8"];
-                                        if (station8count < 5)//轨道+测试机板数量 >= 5 存储，接驳台2#数量<5，不存储，放板
-                                        {
-                                            GlobalVars.Fx5u_left2.SetM("M2596", true);
-                                            this.Dispatcher.Invoke(new Action(() =>
-                                            {
-                                                AddMessage("线A内接驳台2板数:" + station8count.ToString() + " < 5,直接放板");
-                                            }));
-                                        }
-                                        else
-                                        {
-                                            int station7count = (int)dt.Rows[0]["Station7"];
-                                            if (station7count < 10) //轨道 + 测试机板数量 >= 5 存储，接驳台2#数量>=5，本身已存板数<10，存储
-                                            {
-                                                GlobalVars.Fx5u_left2.SetM("M2597", true);
-                                                this.Dispatcher.Invoke(new Action(() =>
-                                                {
-                                                    AddMessage("线A内接驳台1板数:" + station7count.ToString() + " < 10,存储板");
-                                                }));
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                AddMessage("板 " + barcode + " 已测过");
-                                GlobalVars.Fx5u_left2.SetM("M2600", true);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        stm = "SELECT * FROM BODLINE WHERE LineID = '" + LineID1 + "' ORDER BY SIDATE DESC";
-                        ds = mysql.Select(stm);
-                        dt = ds.Tables["table0"];
-                        if (dt.Rows.Count > 0)
-                        {
-                            int bordcount = (int)dt.Rows[0]["Station2"] + (int)dt.Rows[0]["Station3"] + (int)dt.Rows[0]["Station4"] + (int)dt.Rows[0]["Station5"] + (int)dt.Rows[0]["Station6"] + (int)dt.Rows[0]["Station10"] + (int)dt.Rows[0]["Station11"];
-                            if (bordcount < 5)//轨道+测试机板数量 < 5 不存储，放板
-                            {
-                                GlobalVars.Fx5u_left2.SetM("M2596", true);
-                                this.Dispatcher.Invoke(new Action(() =>
-                                {
-                                    AddMessage("线A内接驳台1后板数:" + bordcount.ToString() + " < 5,直接放板");
-                                }));
-                            }
-                            else
-                            {
-                                int station8count = (int)dt.Rows[0]["Station8"];
-                                if (station8count < 5)//轨道+测试机板数量 >= 5 存储，接驳台2#数量<5，不存储，放板
-                                {
-                                    GlobalVars.Fx5u_left2.SetM("M2596", true);
-                                    this.Dispatcher.Invoke(new Action(() =>
-                                    {
-                                        AddMessage("线A内接驳台2板数:" + station8count.ToString() + " < 5,直接放板");
-                                    }));
-                                }
-                                else
-                                {
-                                    int station7count = (int)dt.Rows[0]["Station7"];
-                                    if (station7count < 10) //轨道 + 测试机板数量 >= 5 存储，接驳台2#数量>=5，本身已存板数<10，存储
-                                    {
-                                        GlobalVars.Fx5u_left2.SetM("M2597", true);
-                                        this.Dispatcher.Invoke(new Action(() =>
-                                        {
-                                            AddMessage("线A内接驳台1板数:" + station7count.ToString() + " < 10,存储板");
-                                        }));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    GlobalVars.Fx5u_left2.SetM("M2598", true);
-                }
-                else
-                {
-                    GlobalVars.Fx5u_left2.SetM("M2599", true);
-                }
-                mysql.DisConnect();
-            }
-            else
-            {
-                GlobalVars.Fx5u_left2.SetM("M2599", true);
-            }
-        }
-        /// <summary>
-        /// 扫码确认是新板子了，再判断是留还是放
-        /// </summary>        
-        void Scan4GetBarcodeCallback(string barcode)
-        {
-            if (barcode != "Error")
-            {
-                Mysql mysql = new Mysql();
-                if (mysql.Connect())
-                {
-                    string stm = "SELECT * FROM BODMSG WHERE SCBODBAR = '" + barcode + "' ORDER BY SIDATE DESC LIMIT 0,5";
-                    DataSet ds = mysql.Select(stm);
-                    DataTable dt = ds.Tables["table0"];
-                    if (dt.Rows.Count > 0)
-                    {
-                        if (dt.Rows[0]["STATUS"] == DBNull.Value)
-                        {
-                            stm = "SELECT * FROM BODLINE WHERE LineID = '" + LineID2 + "' ORDER BY SIDATE DESC";
-                            ds = mysql.Select(stm);
-                            dt = ds.Tables["table0"];
-                            if (dt.Rows.Count > 0)
-                            {
-                                int bordcount = (int)dt.Rows[0]["Station2"] + (int)dt.Rows[0]["Station3"] + (int)dt.Rows[0]["Station4"] + (int)dt.Rows[0]["Station5"] + (int)dt.Rows[0]["Station6"] + (int)dt.Rows[0]["Station10"] + (int)dt.Rows[0]["Station11"];
-                                if (bordcount < 5)//轨道+测试机板数量 < 5 不存储，放板
-                                {
-                                    GlobalVars.Fx5u_left2.SetM("M2602", true);
-                                    this.Dispatcher.Invoke(new Action(() =>
-                                    {
-                                        AddMessage("线B内接驳台1后板数:" + bordcount.ToString() + " < 5,直接放板");
-                                    }));
-                                }
-                                else
-                                {
-                                    int station8count = (int)dt.Rows[0]["Station8"];
-                                    if (station8count < 5)//轨道+测试机板数量 >= 5 存储，接驳台2#数量<5，不存储，放板
-                                    {
-                                        GlobalVars.Fx5u_left2.SetM("M2602", true);
-                                        this.Dispatcher.Invoke(new Action(() =>
-                                        {
-                                            AddMessage("线B内接驳台2板数:" + station8count.ToString() + " < 5,直接放板");
-                                        }));
-                                    }
-                                    else
-                                    {
-                                        int station7count = (int)dt.Rows[0]["Station7"];
-                                        if (station7count < 10) //轨道 + 测试机板数量 >= 5 存储，接驳台2#数量>=5，本身已存板数<10，存储
-                                        {
-                                            GlobalVars.Fx5u_left2.SetM("M2603", true);
-                                            this.Dispatcher.Invoke(new Action(() =>
-                                            {
-                                                AddMessage("线B内接驳台1板数:" + station7count.ToString() + " < 10,存储板");
-                                            }));
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if ((string)dt.Rows[0]["STATUS"] == "OFF")
-                            {
-                                stm = "SELECT * FROM BODLINE WHERE LineID = '" + LineID2 + "' ORDER BY SIDATE DESC";
-                                ds = mysql.Select(stm);
-                                dt = ds.Tables["table0"];
-                                if (dt.Rows.Count > 0)
-                                {
-                                    int bordcount = (int)dt.Rows[0]["Station2"] + (int)dt.Rows[0]["Station3"] + (int)dt.Rows[0]["Station4"] + (int)dt.Rows[0]["Station5"] + (int)dt.Rows[0]["Station6"] + (int)dt.Rows[0]["Station10"] + (int)dt.Rows[0]["Station11"];
-                                    if (bordcount < 5)//轨道+测试机板数量 < 5 不存储，放板
-                                    {
-                                        GlobalVars.Fx5u_left2.SetM("M2602", true);
-                                        this.Dispatcher.Invoke(new Action(() =>
-                                        {
-                                            AddMessage("线B内接驳台1后板数:" + bordcount.ToString() + " < 5,直接放板");
-                                        }));
-                                    }
-                                    else
-                                    {
-                                        int station8count = (int)dt.Rows[0]["Station8"];
-                                        if (station8count < 5)//轨道+测试机板数量 >= 5 存储，接驳台2#数量<5，不存储，放板
-                                        {
-                                            GlobalVars.Fx5u_left2.SetM("M2602", true);
-                                            this.Dispatcher.Invoke(new Action(() =>
-                                            {
-                                                AddMessage("线B内接驳台2板数:" + station8count.ToString() + " < 5,直接放板");
-                                            }));
-                                        }
-                                        else
-                                        {
-                                            int station7count = (int)dt.Rows[0]["Station7"];
-                                            if (station7count < 10) //轨道 + 测试机板数量 >= 5 存储，接驳台2#数量>=5，本身已存板数<10，存储
-                                            {
-                                                GlobalVars.Fx5u_left2.SetM("M2603", true);
-                                                this.Dispatcher.Invoke(new Action(() =>
-                                                {
-                                                    AddMessage("线B内接驳台1板数:" + station7count.ToString() + " < 10,存储板");
-                                                }));
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                AddMessage("板 " + barcode + " 已测过");
-                                GlobalVars.Fx5u_left2.SetM("M2606", true);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        stm = "SELECT * FROM BODLINE WHERE LineID = '" + LineID2 + "' ORDER BY SIDATE DESC";
-                        ds = mysql.Select(stm);
-                        dt = ds.Tables["table0"];
-                        if (dt.Rows.Count > 0)
-                        {
-                            int bordcount = (int)dt.Rows[0]["Station2"] + (int)dt.Rows[0]["Station3"] + (int)dt.Rows[0]["Station4"] + (int)dt.Rows[0]["Station5"] + (int)dt.Rows[0]["Station6"] + (int)dt.Rows[0]["Station10"] + (int)dt.Rows[0]["Station11"];
-                            if (bordcount < 5)//轨道+测试机板数量 < 5 不存储，放板
-                            {
-                                GlobalVars.Fx5u_left2.SetM("M2602", true);
-                                this.Dispatcher.Invoke(new Action(() =>
-                                {
-                                    AddMessage("线B内接驳台1后板数:" + bordcount.ToString() + " < 5,直接放板");
-                                }));
-                            }
-                            else
-                            {
-                                int station8count = (int)dt.Rows[0]["Station8"];
-                                if (station8count < 5)//轨道+测试机板数量 >= 5 存储，接驳台2#数量<5，不存储，放板
-                                {
-                                    GlobalVars.Fx5u_left2.SetM("M2602", true);
-                                    this.Dispatcher.Invoke(new Action(() =>
-                                    {
-                                        AddMessage("线B内接驳台2板数:" + station8count.ToString() + " < 5,直接放板");
-                                    }));
-                                }
-                                else
-                                {
-                                    int station7count = (int)dt.Rows[0]["Station7"];
-                                    if (station7count < 10) //轨道 + 测试机板数量 >= 5 存储，接驳台2#数量>=5，本身已存板数<10，存储
-                                    {
-                                        GlobalVars.Fx5u_left2.SetM("M2603", true);
-                                        this.Dispatcher.Invoke(new Action(() =>
-                                        {
-                                            AddMessage("线B内接驳台1板数:" + station7count.ToString() + " < 10,存储板");
-                                        }));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    GlobalVars.Fx5u_left2.SetM("M2604", true);
-                }
-                else
-                {
-                    GlobalVars.Fx5u_left2.SetM("M2605", true);
-                }
-                mysql.DisConnect();
-            }
-            else
-            {
-                GlobalVars.Fx5u_left2.SetM("M2605", true);
-            }
-        }
-        void Scan3GetBarcodeCallback2(string barcode)
-        {
-            if (barcode != "Error")
-            {
-                Mysql mysql = new Mysql();
-                if (mysql.Connect())
-                {
-                    string stm = "SELECT * FROM BODMSG WHERE SCBODBAR = '" + barcode + "' ORDER BY SIDATE DESC LIMIT 0,5";
-                    DataSet ds = mysql.Select(stm);
-                    DataTable dt = ds.Tables["table0"];
-                    if (dt.Rows.Count > 0)
-                    {
-                        if (dt.Rows[0]["STATUS"] == DBNull.Value)
-                        {
-                            stm = "SELECT * FROM BODLINE WHERE LineID = '" + LineID1 + "' ORDER BY SIDATE DESC";
-                            ds = mysql.Select(stm);
-                            dt = ds.Tables["table0"];
-                            if (dt.Rows.Count > 0)
-                            {
-                                int bordcount = (int)dt.Rows[0]["Station6"] + (int)dt.Rows[0]["Station11"];
-                                if (bordcount < 1)//轨道+测试机板数量 < 1 不存储，放板
-                                {
-                                    GlobalVars.Fx5u_left2.SetM("M2596", true);
-                                    this.Dispatcher.Invoke(new Action(() =>
-                                    {
-                                        AddMessage("线A内接驳台2后板数:" + bordcount.ToString() + " < 5,直接放板");
-                                    }));
-                                }
-                                else
-                                {
-                                    int station8count = (int)dt.Rows[0]["Station7"];
-                                    if (station8count < 5) //轨道+测试机板数量 >= 1 存储，本身已存板数<5，存储
-                                    {
-                                        GlobalVars.Fx5u_left2.SetM("M2597", true);
-                                        this.Dispatcher.Invoke(new Action(() =>
-                                        {
-                                            AddMessage("线A内接驳台2板数:" + station8count.ToString() + " < 5,存储板");
-                                        }));
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if ((string)dt.Rows[0]["STATUS"] == "OFF")
-                            {
-                                stm = "SELECT * FROM BODLINE WHERE LineID = '" + LineID1 + "' ORDER BY SIDATE DESC";
-                                ds = mysql.Select(stm);
-                                dt = ds.Tables["table0"];
-                                if (dt.Rows.Count > 0)
-                                {
-                                    int bordcount = (int)dt.Rows[0]["Station6"] + (int)dt.Rows[0]["Station11"];
-                                    if (bordcount < 1)//轨道+测试机板数量 < 1 不存储，放板
-                                    {
-                                        GlobalVars.Fx5u_left2.SetM("M2596", true);
-                                        this.Dispatcher.Invoke(new Action(() =>
-                                        {
-                                            AddMessage("线A内接驳台2后板数:" + bordcount.ToString() + " < 5,直接放板");
-                                        }));
-                                    }
-                                    else
-                                    {
-                                        int station8count = (int)dt.Rows[0]["Station7"];
-                                        if (station8count < 5) //轨道+测试机板数量 >= 1 存储，本身已存板数<5，存储
-                                        {
-                                            GlobalVars.Fx5u_left2.SetM("M2597", true);
-                                            this.Dispatcher.Invoke(new Action(() =>
-                                            {
-                                                AddMessage("线A内接驳台2板数:" + station8count.ToString() + " < 5,存储板");
-                                            }));
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                AddMessage("板 " + barcode + " 已测过");
-                                GlobalVars.Fx5u_left2.SetM("M2600", true);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        stm = "SELECT * FROM BODLINE WHERE LineID = '" + LineID1 + "' ORDER BY SIDATE DESC";
-                        ds = mysql.Select(stm);
-                        dt = ds.Tables["table0"];
-                        if (dt.Rows.Count > 0)
-                        {
-                            int bordcount = (int)dt.Rows[0]["Station6"] + (int)dt.Rows[0]["Station11"];
-                            if (bordcount < 1)//轨道+测试机板数量 < 1 不存储，放板
-                            {
-                                GlobalVars.Fx5u_left2.SetM("M2596", true);
+                                GlobalVars.Fx5u_right1.SetM("M2596", true);
                                 this.Dispatcher.Invoke(new Action(() =>
                                 {
                                     AddMessage("线A内接驳台2后板数:" + bordcount.ToString() + " < 5,直接放板");
@@ -1606,157 +1380,54 @@ namespace TUCHX1621UI
                             }
                             else
                             {
-                                int station8count = (int)dt.Rows[0]["Station7"];
-                                if (station8count < 5) //轨道+测试机板数量 >= 1 存储，本身已存板数<5，存储
-                                {
-                                    GlobalVars.Fx5u_left2.SetM("M2597", true);
-                                    this.Dispatcher.Invoke(new Action(() =>
-                                    {
-                                        AddMessage("线A内接驳台2板数:" + station8count.ToString() + " < 5,存储板");
-                                    }));
-                                }
-                            }
-                        }
-                    }
-                    GlobalVars.Fx5u_left2.SetM("M2598", true);
-                }
-                else
-                {
-                    GlobalVars.Fx5u_left2.SetM("M2599", true);
-                }
-                mysql.DisConnect();
-            }
-            else
-            {
-                GlobalVars.Fx5u_left2.SetM("M2599", true);
-            }
-        }
-        void Scan4GetBarcodeCallback2(string barcode)
-        {
-            if (barcode != "Error")
-            {
-                Mysql mysql = new Mysql();
-                if (mysql.Connect())
-                {
-                    string stm = "SELECT * FROM BODMSG WHERE SCBODBAR = '" + barcode + "' ORDER BY SIDATE DESC LIMIT 0,5";
-                    DataSet ds = mysql.Select(stm);
-                    DataTable dt = ds.Tables["table0"];
-                    if (dt.Rows.Count > 0)
-                    {
-                        if (dt.Rows[0]["STATUS"] == DBNull.Value)
-                        {
-                            stm = "SELECT * FROM BODLINE WHERE LineID = '" + LineID2 + "' ORDER BY SIDATE DESC";
-                            ds = mysql.Select(stm);
-                            dt = ds.Tables["table0"];
-                            if (dt.Rows.Count > 0)
-                            {
-                                int bordcount = (int)dt.Rows[0]["Station6"] + (int)dt.Rows[0]["Station11"];
-                                if (bordcount < 1)//轨道+测试机板数量 < 1 不存储，放板
-                                {
-                                    GlobalVars.Fx5u_left2.SetM("M2602", true);
-                                    this.Dispatcher.Invoke(new Action(() =>
-                                    {
-                                        AddMessage("线B内接驳台2后板数:" + bordcount.ToString() + " < 1,直接放板");
-                                    }));
-                                }
-                                else
-                                {
-                                    int station8count = (int)dt.Rows[0]["Station8"];
-                                    if (station8count < 5) //轨道+测试机板数量 >= 1 存储，本身已存板数<5，存储
-                                    {
-                                        GlobalVars.Fx5u_left2.SetM("M2603", true);
-                                        this.Dispatcher.Invoke(new Action(() =>
-                                        {
-                                            AddMessage("线B内接驳台2板数:" + station8count.ToString() + " < 5,存储板");
-                                        }));
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if ((string)dt.Rows[0]["STATUS"] == "OFF")
-                            {
-                                stm = "SELECT * FROM BODLINE WHERE LineID = '" + LineID2 + "' ORDER BY SIDATE DESC";
-                                ds = mysql.Select(stm);
-                                dt = ds.Tables["table0"];
-                                if (dt.Rows.Count > 0)
-                                {
-                                    int bordcount = (int)dt.Rows[0]["Station6"] + (int)dt.Rows[0]["Station11"];
-                                    if (bordcount < 1)//轨道+测试机板数量 < 1 不存储，放板
-                                    {
-                                        GlobalVars.Fx5u_left2.SetM("M2602", true);
-                                        this.Dispatcher.Invoke(new Action(() =>
-                                        {
-                                            AddMessage("线B内接驳台2后板数:" + bordcount.ToString() + " < 1,直接放板");
-                                        }));
-                                    }
-                                    else
-                                    {
-                                        int station8count = (int)dt.Rows[0]["Station8"];
-                                        if (station8count < 5) //轨道+测试机板数量 >= 1 存储，本身已存板数<5，存储
-                                        {
-                                            GlobalVars.Fx5u_left2.SetM("M2603", true);
-                                            this.Dispatcher.Invoke(new Action(() =>
-                                            {
-                                                AddMessage("线B内接驳台2板数:" + station8count.ToString() + " < 5,存储板");
-                                            }));
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                AddMessage("板 " + barcode + " 已测过");
-                                GlobalVars.Fx5u_left2.SetM("M2606", true);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        stm = "SELECT * FROM BODLINE WHERE LineID = '" + LineID2 + "' ORDER BY SIDATE DESC";
-                        ds = mysql.Select(stm);
-                        dt = ds.Tables["table0"];
-                        if (dt.Rows.Count > 0)
-                        {
-                            int bordcount = (int)dt.Rows[0]["Station6"] + (int)dt.Rows[0]["Station11"];
-                            if (bordcount < 1)//轨道+测试机板数量 < 1 不存储，放板
-                            {
-                                GlobalVars.Fx5u_left2.SetM("M2602", true);
+                                //B轨道
+                                GlobalVars.Fx5u_right1.SetM("M2602", true);
                                 this.Dispatcher.Invoke(new Action(() =>
                                 {
                                     AddMessage("线B内接驳台2后板数:" + bordcount.ToString() + " < 1,直接放板");
                                 }));
                             }
-                            else
+                        }
+                        else
+                        {
+                            int station8count = (int)dt.Rows[0]["Station8"];
+                            if (station8count < 5)//轨道+测试机板数量 >= 1 存储，本身已存板数<5，存储
                             {
-                                int station8count = (int)dt.Rows[0]["Station8"];
-                                if (station8count < 5) //轨道+测试机板数量 >= 1 存储，本身已存板数<5，存储
+                                if (lineIndex == 0)
                                 {
-                                    GlobalVars.Fx5u_left2.SetM("M2603", true);
+                                    GlobalVars.Fx5u_right1.SetM("M2597", true);
+                                    this.Dispatcher.Invoke(new Action(() =>
+                                    {
+                                        AddMessage("线A内接驳台2板数:" + station8count.ToString() + " < 5,存储板");
+                                    }));
+                                }
+                                else
+                                {
+                                    //B轨道
+                                    GlobalVars.Fx5u_right1.SetM("M2603", true);
                                     this.Dispatcher.Invoke(new Action(() =>
                                     {
                                         AddMessage("线B内接驳台2板数:" + station8count.ToString() + " < 5,存储板");
                                     }));
                                 }
-                            }
+
+                            }                           
                         }
                     }
-                    GlobalVars.Fx5u_left2.SetM("M2604", true);
-                }
-                else
-                {
-                    GlobalVars.Fx5u_left2.SetM("M2605", true);
                 }
                 mysql.DisConnect();
             }
-            else
+            catch (Exception ex)
             {
-                GlobalVars.Fx5u_left2.SetM("M2605", true);
+                this.Dispatcher.Invoke(new Action(() =>
+                {
+                    AddMessage(ex.Message);
+                }));
             }
         }
         void Run()
         {
+            string stm = "";
             while (true)
             {
                 System.Threading.Thread.Sleep(100);
@@ -1784,6 +1455,81 @@ namespace TUCHX1621UI
                     scan2.GetBarCode(Scan2GetBarcodeCallback);
                 }
                 #endregion
+                #region 上顶
+                //A轨道
+                if (GlobalVars.Fx5u_mid.ReadM("M2798"))
+                {
+                    this.Dispatcher.Invoke(new Action(() =>
+                    {
+                        AddMessage("轨道A上顶");
+                    }));
+                    Mysql mysql = new Mysql();
+                    if (mysql.Connect())
+                    {
+                        
+                        switch (Station)
+                        {
+                            case 1:
+                                stm = "UPDATE BODLINE SET Station1 = 0, Station9 = Station9 - 1 WHERE WHERE LineID = '" + LineID1 + "'";
+                                break;
+                            case 2:
+                            case 3:
+                            case 4:
+                            case 5:
+                                stm = "UPDATE BODLINE SET Station" + Station.ToString() + " = 0, Station10 = Station10 - 1 WHERE WHERE LineID = '" + LineID1 + "'";
+                                break;
+                            case 6:
+                                stm = "UPDATE BODLINE SET Station6 = 0, Station11 = Station11 - 1 WHERE WHERE LineID = '" + LineID1 + "'";
+                                break;
+                            default:
+                                break;
+                        }
+                        mysql.executeQuery(stm);
+                    }
+                    epsonRC90.BordBarcode[0] = epsonRC90.TemporaryBordBarcode[0];
+                    epsonRC90.ResetBord(0);
+                    stm = "INSERT INTO BODMSG (SCBODBAR, STATUS) VALUES('" + epsonRC90.BordBarcode[0] + "','ON')";
+                    mysql.executeQuery(stm);
+                    mysql.DisConnect();
+                    GlobalVars.Fx5u_mid.SetM("M2798", false);
+                }
+                //B轨道
+                if (GlobalVars.Fx5u_mid.ReadM("M2803"))
+                {
+                    this.Dispatcher.Invoke(new Action(() =>
+                    {
+                        AddMessage("轨道B上顶");
+                    }));
+                    Mysql mysql = new Mysql();
+                    if (mysql.Connect())
+                    {              
+                        switch (Station)
+                        {
+                            case 1:
+                                stm = "UPDATE BODLINE SET Station1 = 0, Station9 = Station9 - 1 WHERE WHERE LineID = '" + LineID2 + "'";
+                                break;
+                            case 2:
+                            case 3:
+                            case 4:
+                            case 5:
+                                stm = "UPDATE BODLINE SET Station" + Station.ToString() + " = 0, Station10 = Station10 - 1 WHERE WHERE LineID = '" + LineID2 + "'";
+                                break;
+                            case 6:
+                                stm = "UPDATE BODLINE SET Station6 = 0, Station11 = Station11 - 1 WHERE WHERE LineID = '" + LineID2 + "'";
+                                break;
+                            default:
+                                break;
+                        }
+                        mysql.executeQuery(stm);
+                    }
+                    epsonRC90.BordBarcode[1] = epsonRC90.TemporaryBordBarcode[1];
+                    epsonRC90.ResetBord(1);
+                    stm = "INSERT INTO BODMSG (SCBODBAR, STATUS) VALUES('" + epsonRC90.BordBarcode[1] + "','ON')";
+                    mysql.executeQuery(stm);
+                    mysql.DisConnect();
+                    GlobalVars.Fx5u_mid.SetM("M2803", false);
+                }
+                #endregion
                 #region 测完下放
                 if (GlobalVars.Fx5u_mid.ReadM("M2799"))
                 {
@@ -1794,7 +1540,7 @@ namespace TUCHX1621UI
                     Mysql mysql = new Mysql();
                     if (mysql.Connect())
                     {
-                        string stm = "UPDATE BODLINE SET Station" + Station.ToString() + " = 0 WHERE WHERE LineID = '" + LineID1 + "'";
+                        stm = "UPDATE BODLINE SET Station" + Station.ToString() + " = 0 WHERE WHERE LineID = '" + LineID1 + "'";
                         mysql.executeQuery(stm);
                     }
                     mysql.DisConnect();
@@ -1810,7 +1556,7 @@ namespace TUCHX1621UI
                     Mysql mysql = new Mysql();
                     if (mysql.Connect())
                     {
-                        string stm = "UPDATE BODLINE SET Station" + Station.ToString() + " = 0 WHERE WHERE LineID = '" + LineID2 + "'";
+                        stm = "UPDATE BODLINE SET Station" + Station.ToString() + " = 0 WHERE WHERE LineID = '" + LineID2 + "'";
                         mysql.executeQuery(stm);
                     }
                     mysql.DisConnect();
@@ -1864,9 +1610,15 @@ namespace TUCHX1621UI
                 { }
                 try
                 {
+                    bool[] M2860 = GlobalVars.Fx5u_mid.ReadMultiM("M2860", 32);
+                    GlobalVars.Fx5u_right1.SetMultiM("M2660", M2860);
                     switch (Station)
                     {
                         case 1:
+                            {
+                                bool[] M2860_2 = GlobalVars.Fx5u_right1.ReadMultiM("M2860", 32);
+                                GlobalVars.Fx5u_right2.SetMultiM("M2660", M2860_2);
+                            }
                             break;
                         case 2:
                         case 6:
@@ -1881,6 +1633,17 @@ namespace TUCHX1621UI
                             {
                                 bool[] M2764 = GlobalVars.Fx5u_mid.ReadMultiM("M2764", 32);
                                 GlobalVars.Fx5u_left2.SetMultiM("M2564", M2764);
+                                switch (Station)
+                                {
+                                    case 5:
+                                        {
+                                            bool[] M2860_2 = GlobalVars.Fx5u_right1.ReadMultiM("M2860", 32);
+                                            GlobalVars.Fx5u_right2.SetMultiM("M2660", M2860_2);
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }
                             break;
                     }
@@ -1962,6 +1725,39 @@ namespace TUCHX1621UI
             ResourceDictionary resourceDictionary = dictionaryList.FirstOrDefault(d => d.Source.OriginalString.Equals(requestedCulture));
             Application.Current.Resources.MergedDictionaries.Remove(resourceDictionary);
             Application.Current.Resources.MergedDictionaries.Add(resourceDictionary);
+        }
+
+        private async void StartSamClick(object sender, RoutedEventArgs e)
+        {
+            if (epsonRC90.TestSendStatus && !TUCHX1621UI.Model.Tester.IsInSampleMode && IsSam.IsChecked.Value)
+            {
+                await epsonRC90.TestSentNet.SendAsync("StartSample");
+            }
+        }
+
+        private void SamplePageSelect(object sender, RoutedEventArgs e)
+        {
+            HomePage.Visibility = Visibility.Collapsed;
+            ParameterPage.Visibility = Visibility.Collapsed;
+            SamplePage.Visibility = Visibility.Visible;
+        }
+
+        private void SaveSamParamClick(object sender, RoutedEventArgs e)
+        {
+            Inifile.INIWriteValue(iniParameterPath, "Sample", "NGItem0", NGItem0_text.Text);
+            Inifile.INIWriteValue(iniParameterPath, "Sample", "NGItem1", NGItem1_text.Text);
+            Inifile.INIWriteValue(iniParameterPath, "Sample", "NGItem2", NGItem2_text.Text);
+            Inifile.INIWriteValue(iniParameterPath, "Sample", "NGItem3", NGItem3_text.Text);
+            Inifile.INIWriteValue(iniParameterPath, "Sample", "NGItem4", NGItem4_text.Text);
+            Inifile.INIWriteValue(iniParameterPath, "Sample", "NGItem5", NGItem5_text.Text);
+            Inifile.INIWriteValue(iniParameterPath, "Sample", "NGItem6", NGItem6_text.Text);
+            Inifile.INIWriteValue(iniParameterPath, "Sample", "NGItem7", NGItem7_text.Text);
+            Inifile.INIWriteValue(iniParameterPath, "Sample", "NGItemCount", NGItem_count.Text);
+            Inifile.INIWriteValue(iniParameterPath, "Sample", "NGItemLimit", NGItemLimit_count.Text);
+            FlexID1.Text = Inifile.INIGetStringValue(iniFilepath, "A", "id1", "99999");
+            FlexID2.Text = Inifile.INIGetStringValue(iniFilepath, "A", "id2", "99999");
+            FlexID3.Text = Inifile.INIGetStringValue(iniFilepath, "A", "id3", "99999");
+            FlexID4.Text = Inifile.INIGetStringValue(iniFilepath, "A", "id4", "99999");
         }
 
         private void LanguageSwitchEnglish(object sender, RoutedEventArgs e)
