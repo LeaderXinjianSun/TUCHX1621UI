@@ -1,0 +1,2 @@
+SELECT * FROM BODLINE
+#UPDATE BODLINE SET Station1 = 1,Station2 = 2,Station3 = 3,Station4 = 3,Station5 = 3,Station6 = 3,Station7 = 3,Station8 = 3,Station9 = 3,Station10 = 3,Station11 = 3,Station12 = 3,Station13 = 3,Station14 = 3,Station15 = 3,Station16 = 3,Station17 = 3,Station18 = 3,Station19 = 3 WHERE LineID = 'Line2'

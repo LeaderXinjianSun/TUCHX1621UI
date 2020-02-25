@@ -648,6 +648,7 @@ namespace TUCHX1621UI
                         AddMessage("机台站:" + Station.ToString() + ";轨道入口功能开启");
                         break;
                     case 2:
+                    case 4:
                     case 6:
                         statusBarItem5.Visibility = Visibility.Collapsed;
                         plc_ip = Inifile.INIGetStringValue(iniParameterPath, "System", "PLC0IP", "192.168.10.2");
@@ -662,6 +663,9 @@ namespace TUCHX1621UI
                                 Task.Run(() => { DockStation1Run(); });
                                 AddMessage("机台站:" + Station.ToString() + ";接驳台1功能开启");
                                 break;
+                            case 4:
+                                AddMessage("机台站:" + Station.ToString() + ";翻转接驳台开启");
+                                break;
                             case 6:
                                 Task.Run(() => { DockStation2Run(); });
                                 AddMessage("机台站:" + Station.ToString() + ";接驳台2功能开启");
@@ -670,8 +674,7 @@ namespace TUCHX1621UI
                                 break;
                         }
                         break;
-                    case 3:
-                    case 4:
+                    case 3:     
                     case 5:
                         plc_ip = Inifile.INIGetStringValue(iniParameterPath, "System", "PLC1IP", "192.168.10.2");
                         plc_port = int.Parse(Inifile.INIGetStringValue(iniParameterPath, "System", "PLC1PORT", "8000"));
@@ -817,10 +820,22 @@ namespace TUCHX1621UI
             while (true)
             {
                 await Task.Delay(100);
+                EllipsePLCState2.Fill = GlobalVars.Fx5u_mid.Connect ? Brushes.Green : Brushes.Red;
+                EllipsePLCState4.Fill = GlobalVars.Fx5u_right1.Connect ? Brushes.Green : Brushes.Red;
                 switch (Station)
                 {
                     case 1:
-                        EllipsePLCState2.Fill = GlobalVars.Fx5u_mid.Connect ? Brushes.Green : Brushes.Red;
+                        EllipsePLCState5.Fill = GlobalVars.Fx5u_right2.Connect ? Brushes.Green : Brushes.Red;
+                        break;
+                    case 3:
+                    case 4:
+                    case 5:
+                        EllipsePLCState1.Fill = GlobalVars.Fx5u_left2.Connect ? Brushes.Green : Brushes.Red;
+                        break;
+                    case 2:
+                    case 6:
+                        EllipsePLCState0.Fill = GlobalVars.Fx5u_left1.Connect ? Brushes.Green : Brushes.Red;
+                        EllipsePLCState1.Fill = GlobalVars.Fx5u_left2.Connect ? Brushes.Green : Brushes.Red;
                         break;
                     default:
                         break;
@@ -1441,6 +1456,16 @@ namespace TUCHX1621UI
                     }));
                     GlobalVars.Fx5u_mid.SetM("M2797", false);
                     GlobalVars.Fx5u_mid.SetMultiM("M2597", new bool[4] { false, false, false, false });
+                    switch (Station)
+                    {
+                        case 5:
+                        case 1:
+                            GlobalVars.Fx5u_right1.SetM("M2596", false);
+                            GlobalVars.Fx5u_right1.SetM("M2597", false);
+                            break;
+                        default:
+                            break;
+                    }
                     scan1.GetBarCode(Scan1GetBarcodeCallback);
                 }
                 //扫码（载具）【B轨道】
@@ -1452,6 +1477,16 @@ namespace TUCHX1621UI
                     }));
                     GlobalVars.Fx5u_mid.SetM("M2802", false);
                     GlobalVars.Fx5u_mid.SetMultiM("M2602", new bool[4] { false, false, false, false });
+                    switch (Station)
+                    {
+                        case 5:
+                        case 1:
+                            GlobalVars.Fx5u_right1.SetM("M2602", false);
+                            GlobalVars.Fx5u_right1.SetM("M2602", false);
+                            break;
+                        default:
+                            break;
+                    }
                     scan2.GetBarCode(Scan2GetBarcodeCallback);
                 }
                 #endregion
@@ -1590,7 +1625,7 @@ namespace TUCHX1621UI
                 System.Threading.Thread.Sleep(10);
                 try
                 {
-                    bool[] X50 = GlobalVars.Fx5u_mid.ReadMultiM("X32", 16);
+                    bool[] X50 = GlobalVars.Fx5u_mid.ReadMultiM("M3000", 16);
                     bool[] Y50 = new bool[16];
                     for (int i = 0; i < 16; i++)
                     {
@@ -1605,6 +1640,7 @@ namespace TUCHX1621UI
                         epsonRC90.Rc90In[i + 16] = M2700[i];
                         M2500[i] = epsonRC90.Rc90Out[i + 16];
                     }
+                    GlobalVars.Fx5u_mid.SetMultiM("M2500", M2500);
                 }
                 catch
                 { }
@@ -1621,6 +1657,7 @@ namespace TUCHX1621UI
                             }
                             break;
                         case 2:
+                        case 4:
                         case 6:
                             {
                                 bool[] M2764_2 = GlobalVars.Fx5u_left2.ReadMultiM("M2764", 32);

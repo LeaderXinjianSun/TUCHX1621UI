@@ -73,7 +73,7 @@ namespace TUCHX1621UI.Model
                     await Task.Delay(1000);
                     if (!IOReceiveNet.tcpConnected)
                     {
-                        bool r1 = await IOReceiveNet.Connect(Ip, 2007);
+                        bool r1 = await IOReceiveNet.Connect(Ip, 2000);
                         if (r1)
                         {
                             IOReceiveStatus = true;
@@ -98,7 +98,7 @@ namespace TUCHX1621UI.Model
                     await Task.Delay(1000);
                     if (!TestSentNet.tcpConnected)
                     {
-                        bool r1 = await TestSentNet.Connect(Ip, 2000);
+                        bool r1 = await TestSentNet.Connect(Ip, 2001);
                         if (r1)
                         {
                             TestSendStatus = true;
@@ -127,7 +127,7 @@ namespace TUCHX1621UI.Model
                     await Task.Delay(1000);
                     if (!TestReceiveNet.tcpConnected)
                     {
-                        bool r1 = await TestReceiveNet.Connect(Ip, 2001);
+                        bool r1 = await TestReceiveNet.Connect(Ip, 2002);
                         if (r1)
                         {
                             TestReceiveStatus = true;
