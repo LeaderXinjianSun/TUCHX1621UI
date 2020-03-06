@@ -21,6 +21,7 @@ using BingLibrary.hjb;
 
 namespace TUCHX1621UI
 {
+    //此项目已经添加到github
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
